@@ -66,6 +66,8 @@ public class Photo extends DataObject {
 	public static final int MAX_PHOTO_HEIGHT = 600;
 	public static final int MAX_THUMB_PHOTO_WIDTH = 105;
 	public static final int MAX_THUMB_PHOTO_HEIGHT = 150;
+	
+	public Location location;
 
 	protected PhotoId id = null;
 	
@@ -148,6 +150,15 @@ public class Photo extends DataObject {
 		incWriteCount();
 	}
 
+	public Location getLocation() {
+		return this.location;
+	}
+	
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+	
+	
 	/**
 	 * @methodtype get
 	 */
