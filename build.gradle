@@ -59,10 +59,8 @@ dependencies {
 }
 
 test {
-    filter {
-        includeTestsMatching "org.wahlzeit.*"
-    }
-    testLogging {
+    include "AllTests.class"
+	testLogging {
             events "passed", "skipped", "failed"
 
             afterSuite { desc, result ->
