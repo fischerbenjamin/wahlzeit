@@ -20,6 +20,9 @@
 
 package org.wahlzeit.services;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
 /**
@@ -27,28 +30,22 @@ import junit.framework.TestCase;
  */
 public class EmailAddressTest extends TestCase {
 
-	/**
-	 *
-	 */
+	private final String EMAIL_ADDRESS_STRING_A = "userA@hostA.com";
+	private final String EMAIL_ADDRESS_STRING_B = "userB@hostB.com";
+	private final String EMAIL_ADDRESS_STRING_C = "userC@hostC.com";
+	private final String EMAIL_ADDRESS_STRING_X = "userA@hostA.com";
+	private final String EMAIL_ADDRESS_STRING_EMPTY = "";
+	
+	private EmailAddress emailAddressA;
+	private EmailAddress emailAddressB;
+	private EmailAddress emailAddressC;
+	private EmailAddress emailAddressX;
+	private EmailAddress emailAddressEmpty;
+
 	public EmailAddressTest(String name) {
 		super(name);
 	}
 
-	/**
-	 *
-	 */
-	public void testGetEmailAddressFromString() {
-		// invalid email addresses are allowed for local testing and online avoided by Google
-
-		assertTrue(createEmailAddressIgnoreException("bingo@bongo"));
-		assertTrue(createEmailAddressIgnoreException("bingo@bongo.com"));
-		assertTrue(createEmailAddressIgnoreException("bingo.bongo@bongo.com"));
-		assertTrue(createEmailAddressIgnoreException("bingo+bongo@bango"));
-	}
-
-	/**
-	 *
-	 */
 	protected boolean createEmailAddressIgnoreException(String ea) {
 		try {
 			EmailAddress.getFromString(ea);
@@ -58,13 +55,58 @@ public class EmailAddressTest extends TestCase {
 			return false;
 		}
 	}
+	
+	@Before
+	public void setUp() {
+		emailAddressA = EmailAddress.getFromString(EMAIL_ADDRESS_STRING_A);
+		emailAddressB = EmailAddress.getFromString(EMAIL_ADDRESS_STRING_B);
+		emailAddressC = EmailAddress.getFromString(EMAIL_ADDRESS_STRING_C);
+		emailAddressX = EmailAddress.getFromString(EMAIL_ADDRESS_STRING_X);
+		emailAddressEmpty = EmailAddress.getFromString(EMAIL_ADDRESS_STRING_EMPTY);
+	}
+	
+	@Test
+	public void testGetEmailAddressFromString() {
+		// invalid email addresses are allowed for local testing and online avoided by Google
+		assertTrue(createEmailAddressIgnoreException("bingo@bongo"));
+		assertTrue(createEmailAddressIgnoreException("bingo@bongo.com"));
+		assertTrue(createEmailAddressIgnoreException("bingo.bongo@bongo.com"));
+		assertTrue(createEmailAddressIgnoreException("bingo+bongo@bango"));
+	}
 
-	/**
-	 *
-	 */
+	@Test
 	public void testEmptyEmailAddress() {
 		assertFalse(EmailAddress.EMPTY.isValid());
 	}
+	
+	@Test
+	public void testIsEmpty() {
+		assertTrue(emailAddressEmpty.isEmpty());
+		assertFalse(emailAddressA.isEmpty());
+	}
 
+	@Test
+	public void testIsValid() {
+		assertTrue(emailAddressA.isValid());
+		assertFalse(emailAddressEmpty.isValid());
+	}
+	
+	@Test
+	public void testIsEqual() {
+		assertTrue(emailAddressB.isEqual(emailAddressB));
+		assertFalse(emailAddressA.isEqual(emailAddressC));
+		assertTrue(emailAddressA.isEqual(emailAddressX));
+	}
+	
+	@Test
+	public void testAsInternetAddress() {
+		assertNull(emailAddressEmpty.asInternetAddress());
+		assertNotNull(emailAddressC.asInternetAddress());
+	}
+	
+	@Test
+	public void testAsString() {
+		assertEquals(EMAIL_ADDRESS_STRING_EMPTY, emailAddressEmpty.asString());
+		assertEquals(EMAIL_ADDRESS_STRING_A, emailAddressA.asString());
+	}
 }
-
