@@ -33,7 +33,7 @@ public class PhotoFactory {
 	/**
 	 * Hidden singleton instance; needs to be initialized from the outside.
 	 */
-	private static PhotoFactory instance = null;
+	private static PhotoFactory instance = new TrainPhotoFactory();
 
 	/**
 	 *
