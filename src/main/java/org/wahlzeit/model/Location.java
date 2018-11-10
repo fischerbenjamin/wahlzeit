@@ -20,7 +20,6 @@
 
 package org.wahlzeit.model;
 
-
 /**	
  * This class is used to store information about the location
  * of a photo.
@@ -38,21 +37,32 @@ public class Location {
 	/**
 	 * Cartesian coordinate of the location.
 	 */
-	public Coordinate coordinate;
+	private Coordinate coordinate;
 	
+	/**
+	 * @methodtype constructor
+	 */
 	public Location(Coordinate coordinate) {
 		this.coordinate = coordinate;
 	}
 	
+	/**
+	 * @methodtype set
+	 */
 	public void setCoordinate(Coordinate coordinate) {
 		this.coordinate = coordinate;
 	}
-	
+
+	/**
+	 * @methodtype get
+	 */
 	public Coordinate getCoordinate() {
 		return this.coordinate;
 	}
 	
 	/**
+	 * @methodtype comparison
+	 *
 	 * Checks if two locations are the same. They are considered
 	 * as equal when their distance to each other is at most
 	 * EPSILON.
