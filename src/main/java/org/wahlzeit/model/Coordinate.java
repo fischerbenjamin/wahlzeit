@@ -25,43 +25,43 @@ package org.wahlzeit.model;
  */
 public class Coordinate {
 	
-	private double x;
-	private double y;
-	private double z;
+	private final double x;
+	private final double y;
+	private final double z;
 	
-	public Coordinate() {}
-	
+	/**
+	 * @methodtype constructor
+	 */
 	public Coordinate(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 	
+	/**
+	 * @methodtype get
+	 */
 	public double getX() {
 		return this.x;
 	}
 
+	/**
+	 * @methodtype get
+	 */
 	public double getY() {
 		return this.y;
 	}
 	
+	/**
+	 * @methodtype get
+	 */
 	public double getZ() {
 		return this.z;
 	}
 	
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public void setY(double y) {
-		this.y = y;
-	}
-	
-	public void setZ(double z) {
-		this.z = z;
-	}
-	
 	/**
+	 * @methodtype get
+	 *
 	 * The distance of two coordinates is the Euclidian distance
 	 * in the three-dimensional space.
 	 */
@@ -76,6 +76,8 @@ public class Coordinate {
 	}
 	
 	/**
+	 * @methodtype boolean query
+	 *
 	 * Two coordinates are considered as equal if their
 	 * x/y/z values are equal.
 	 */
@@ -92,6 +94,8 @@ public class Coordinate {
 	}
 
 	/**
+	 * @methodtype comparison
+	 *
 	 * This method simply forwards to {@link #isEqual(Coordinate)}.
 	 */
 	public boolean equals(Object obj) {
