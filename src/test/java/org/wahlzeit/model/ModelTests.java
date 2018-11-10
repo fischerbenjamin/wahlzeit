@@ -34,7 +34,10 @@ import org.junit.runners.*;
 	PhotoFilterTest.class,
 	TagsTest.class,
 	UserStatusTest.class,
-	ValueTest.class
+	ValueTest.class,
+	TrainPhotoTest.class,
+	PhotoManagerTest.class,
+	PhotoFactoryTest.class
 })
 
 public class ModelTests {}
