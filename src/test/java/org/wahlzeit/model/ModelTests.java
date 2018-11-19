@@ -26,6 +26,8 @@ import org.junit.runners.*;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	AccessRightsTest.class,
+	CartesianCoordinateTest.class,
+	SphericCoordinateTest.class,
 	CoordinateTest.class,
 	FlagReasonTest.class,
 	GenderTest.class,

@@ -31,54 +31,86 @@ import static org.junit.Assert.assertTrue;
  */
 public class CoordinateTest {
 
-	protected static final double EPSILON = 10e-9;
+	private static final double EPSILON = 10E-7;
+	private static final double DEFAULT = 42.0;
 	
-	protected Coordinate coordinateA;
-	protected Coordinate coordinateB;
-	protected Coordinate coordinateC;
-	protected Coordinate coordinateD;
-	protected Coordinate coordinateE;
+	private CartesianCoordinate cartesianA;
+	private CartesianCoordinate cartesianB;
+	private CartesianCoordinate cartesianC;
+	
+	private Coordinate coord;
+	
+	private SphericCoordinate sphericA;
+	private SphericCoordinate sphericB;
+	private SphericCoordinate sphericC;
+	private SphericCoordinate sphericD;
 	
 	@Before
 	public void setUp() {
-		coordinateA = new Coordinate(1.0, 2.0, 3.0);
-		coordinateB = new Coordinate(-3.0, -2.0, -1.0);
-		coordinateC = new Coordinate(1.0, 2.0, 3.0);
-		coordinateD = new Coordinate(0.9, 0.01, 100.0);
+		cartesianA = new CartesianCoordinate(1.0, 1.0, 0.0);
+		cartesianB = new CartesianCoordinate(-1.0, 1.0, 1.0);
+		cartesianC = new CartesianCoordinate(DEFAULT, DEFAULT, DEFAULT);
+		sphericA = new SphericCoordinate(90.0, 90.0, 2.0);
+		sphericB = new SphericCoordinate(45.0, 45.0, 10.0);
+		sphericC = new SphericCoordinate(30.0, 60.0, 2.0);
+		sphericD = new SphericCoordinate(90.0, 45.0, Math.sqrt(2.0));
+		coord = null;
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCheckDoubleNaN() {
+		Coordinate tmp = new CartesianCoordinate(Double.NaN, DEFAULT, DEFAULT);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testCheckDoublePositiveInfinity() {
+		Coordinate tmp = new CartesianCoordinate(Double.POSITIVE_INFINITY, DEFAULT, DEFAULT);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testCheckDoubleNegativeInfinity() {
+		Coordinate tmp = new CartesianCoordinate(Double.NEGATIVE_INFINITY, DEFAULT, DEFAULT);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testGetCartesianDistanceNull() {
+		cartesianA.getCartesianDistance(coord);
+	}
+	
+	@Test
+	public void testGetCartesianDistanceBothCartesian() {
+		assertEquals(Math.sqrt(5.0), cartesianA.getCartesianDistance(cartesianB), EPSILON);
+	}
+	
+	@Test
+	public void testGetCartesianDistanceOneCartesianOneSpheric() {
+		assertEquals(Math.sqrt(2.0), cartesianA.getCartesianDistance(sphericA), EPSILON);
+	}
+	
+	@Test
+	public void testGetCartesianBothSpheric() {
+		assertEquals(9.165151, sphericA.getCartesianDistance(sphericB), EPSILON);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testGetCentralAngleNull() {
+		cartesianA.getCentralAngle(coord);
 	}
 
 	@Test
-	public void testDistance() {
-		assertEquals(0.0, coordinateA.getDistance(coordinateA), EPSILON);
-		assertEquals(Math.sqrt(48.0), coordinateB.getDistance(coordinateA), EPSILON);
-		assertEquals(0.0, coordinateC.getDistance(coordinateA), EPSILON);
-		assertEquals(Math.sqrt(9412.9701), coordinateD.getDistance(coordinateA), EPSILON);
+	public void testGetCentralAngleSameSphere() {
+		assertEquals(Math.toRadians(64.34109316), sphericA.getCentralAngle(sphericC), EPSILON);
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
-	public void testDistanceNull() {
-		coordinateA.getDistance(null);
-	}
-	
-	@Test
-	public void testEquals() {
-		assertFalse(coordinateB.equals(null));
-		assertTrue(coordinateC.equals(coordinateA));
-		assertFalse(coordinateD.equals(coordinateC));
-		assertTrue(coordinateD.equals(coordinateD));
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void testIsEqualNull() {
-		coordinateA.isEqual(null);
+	public void testGetCentralAngleOtherSphere() {
+		sphericA.getCentralAngle(cartesianC);
 	}
 	
 	@Test
 	public void testIsEqual() {
-		assertTrue(coordinateB.isEqual(coordinateB));
-		assertFalse(coordinateA.isEqual(coordinateB));
-		assertFalse(coordinateC.isEqual(coordinateD));
-		assertFalse(coordinateD.isEqual(coordinateA));
+		assertTrue(cartesianA.isEqual(cartesianA));
+		assertFalse(cartesianA.isEqual(cartesianB));
+		assertTrue(cartesianA.isEqual(sphericD));
 	}
-	
 }
