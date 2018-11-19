@@ -33,17 +33,17 @@ public class LocationTest {
 	protected Location locationA;
 	protected Location locationB;
 	protected Location locationC;
-	protected Coordinate coordinateA;
-	protected Coordinate coordinateB;
-	protected Coordinate coordinateC;
+	protected CartesianCoordinate coordinateA;
+	protected CartesianCoordinate coordinateB;
+	protected CartesianCoordinate coordinateC;
 	
 	@Before
 	public void setUp() {
-		coordinateA = new Coordinate(1.0, 2.0, 3.0);
-		coordinateB = new Coordinate(-3.0, -2.0, -1.0);
+		coordinateA = new CartesianCoordinate(1.0, 2.0, 3.0);
+		coordinateB = new CartesianCoordinate(-3.0, -2.0, -1.0);
 		locationA = new Location(coordinateA);
 		locationB = new Location(coordinateB);
-		coordinateC = new Coordinate(-3.0000000001, -2.0, -1.0);
+		coordinateC = new CartesianCoordinate(-3.0000000001, -2.0, -1.0);
 		locationC = new Location(coordinateC);
 	}
 

@@ -73,7 +73,7 @@ public class Location {
 		}
 		if (obj instanceof Location) {
 			Location location = (Location) obj;
-			double distance = this.coordinate.getDistance(location.getCoordinate()); 
+			double distance = this.getCoordinate().getCartesianDistance(location.getCoordinate()); 
 			if (distance < EPSILON) {
 				return true;
 			}
