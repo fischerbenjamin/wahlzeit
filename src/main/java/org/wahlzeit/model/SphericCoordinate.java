@@ -74,7 +74,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 */
 	private void doCheckAzimut(double azimut) {
 		checkDouble(azimut, "azimut");
-		if (azimut < 0 || azimut >= 360) {
+		if (azimut < 0.0 || azimut >= 360.0) {
 			throw new IllegalArgumentException("Phi must be in range of [0;360).");
 		}
 	}
@@ -84,7 +84,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 */
 	private void doCheckPolar(double polar) {
 		checkDouble(polar, "polar");
-		if (polar < 0 || polar > 180) {
+		if (polar < 0.0 || polar > 180.0) {
 			throw new IllegalArgumentException("Theta must be in range of [0;180].");
 		}
 	}

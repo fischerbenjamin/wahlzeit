@@ -59,9 +59,7 @@ public class Angle {
 	 * @methodtype conversion
 	 */
 	public static final double convertDegToValidDeg(double deg) {
-		if ((deg == Double.NaN) || (deg == Double.POSITIVE_INFINITY) || (deg == Double.NEGATIVE_INFINITY) ) {
-			throw new IllegalArgumentException("Deg must not be a valid number.");
-		}
+		AbstractCoordinate.checkDouble(deg, "deg");
 		while(deg < 360) {
 			deg += 360;
 		}
