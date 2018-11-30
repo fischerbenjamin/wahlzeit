@@ -21,102 +21,144 @@
 package org.wahlzeit.model;
 
 /**
- * A class representing spheric coordinates. Angles must be passed in degrees.
+ * A class representing spheric coordinates. A spheric coordinate consists
+ * of three values:
+ * 	{@link #polar}:		polar angle		([0;180))
+ * 	{@link #azimut}:	azimut angle	([0;360))
+ *	{@link #radius}:	radius			([0;+inf))
+ * All fields are declared as private and final. Values must be passed in degrees.
  */
 public class SphericCoordinate extends AbstractCoordinate {
 
-	private final Angle polar;
-	private final Angle azimut;
-	private final double radius;
+	private final double polar;		// polar angle of a spheric coordinate.
+	private final double azimut;	// azimut angle of a spheric coordinate.
+	private final double radius;	// radius of a spheric coordinate.
 		
 	/**
+	 * Creates a new instance of {@link SphericCoordinate} with given values.
+	 * 
 	 * @methodtype constructor
 	 */
 	public SphericCoordinate(double polar, double azimut, double radius) {
-		checkArguments(polar, azimut, radius);
-		this.polar = new Angle(polar);
-		this.azimut = new Angle(azimut);
+		//@PRE
+		AbstractCoordinate.assertDoubleIsFinite(polar);
+		AbstractCoordinate.assertDoubleIsFinite(azimut);
+		AbstractCoordinate.assertDoubleIsFinite(radius);
+		//@PRE
+		this.polar = polar;
+		this.azimut = azimut;
 		this.radius = radius;
-	}
-
-	/**
-	 * @methodtype assert
-	 */
-	private void checkArguments(double polar, double azimut, double radius) {
-		doCheckPolar(polar);
-		doCheckAzimut(azimut);
-		doCheckRadius(radius);
+		//@POST
+		this.assertClassInvariants();
+		//@POST
 	}
 	
 	/**
+	 * Returns the polar angle {@link #polar} of the coordinate.
+	 * 
 	 * @methodtype get
 	 */
-	public Angle getPolar() {
+	public double getPolar() {
 		return this.polar;
 	}
 	
 	/**
+	 * Returns the azimut angle {@link #azimut} of the coordinate.
+	 * 
 	 * @methodtype get
 	 */
-	public Angle getAzimut() {
+	public double getAzimut() {
 		return this.azimut;
 	}
 	
 	/**
+	 * Returns the radius {@link #radius} of the coordinate.
+	 * 
 	 * @methodtype get
 	 */
 	public double getRadius() {
 		return this.radius;
 	}
-	
+			
 	/**
-	 * @methodtype assert
-	 */
-	private void doCheckAzimut(double azimut) {
-		checkDouble(azimut, "azimut");
-		if (azimut < 0.0 || azimut >= 360.0) {
-			throw new IllegalArgumentException("Phi must be in range of [0;360).");
-		}
-	}
-
-	/**
-	 * @methodtype assert
-	 */
-	private void doCheckPolar(double polar) {
-		checkDouble(polar, "polar");
-		if (polar < 0.0 || polar > 180.0) {
-			throw new IllegalArgumentException("Theta must be in range of [0;180].");
-		}
-	}
-	
-	/**
-	 * @methodtype assert
-	 */
-	private void doCheckRadius(double radius) {
-		checkDouble(radius, "radius");
-		if (radius < 0) {
-			throw new IllegalArgumentException("Radius must be greater than 0.");
-		}
-	}
-	
-	/**
+	 * Converts the spheric coordinate into a Cartesian coordinate and
+	 * returns a new instance of {@link CartesianCoordinate}.
+	 * 
 	 * @methodtype conversion
 	 */
 	@Override
 	public CartesianCoordinate asCartesianCoordinate() {
-		double x,y,z; 
-		x = this.getRadius() * Math.sin(this.getPolar().getAngleRad()) * Math.cos(this.getAzimut().getAngleRad());
-		y = this.getRadius() * Math.sin(this.getPolar().getAngleRad()) * Math.sin(this.getAzimut().getAngleRad());
-		z = this.getRadius() * Math.cos(this.getPolar().getAngleRad());
-		return new CartesianCoordinate(x, y, z);
+		//@PRE
+		this.assertClassInvariants();
+		//@PRE
+		double x = this.getRadius() * Math.sin(Math.toRadians(this.getPolar())) * Math.cos(Math.toRadians(this.getAzimut()));
+		double y = this.getRadius() * Math.sin(Math.toRadians(this.getPolar())) * Math.sin(Math.toRadians(this.getAzimut()));
+		double z = this.getRadius() * Math.cos(Math.toRadians(this.getPolar()));
+		CartesianCoordinate converted = new CartesianCoordinate(x, y, z);
+		//@POST
+		this.assertClassInvariants();
+		converted.assertClassInvariants();
+		//@POST
+		return converted;
 	}
 
 	/**
+	 * The conversion of a spheric coordinate into a spheric
+	 * coordinate is the instance itself.
+	 * 
 	 * @methodtype conversion
 	 */
 	@Override
 	public SphericCoordinate asSphericCoordinate() {
-		return new SphericCoordinate(this.getPolar().getAngleDeg(), this.getAzimut().getAngleDeg(), this.getRadius());
+		//@PRE
+		this.assertClassInvariants();
+		//@PRE
+		return this;
+	}
+	
+	/**
+	 * Asserts that a spheric coordinate is valid. In order to be valid,
+	 * the azimut/polar/radius must be valid.
+	 * 
+	 * @methodtype assert
+	 */
+	@Override
+	public void assertClassInvariants() {
+		this.assertPolarAngleIsValid();
+		this.assertAzimutAngleIsValid();
+		this.assertRadiusIsValid();
+	}
+	
+	/**
+	 * Asserts that the polar angle {@link #polar} of the spheric coordinate is valid.
+	 * 
+	 * @methodtype assert
+	 */
+	private void assertPolarAngleIsValid() {
+		AbstractCoordinate.assertDoubleIsFinite(this.getPolar());
+		assert(this.getPolar() >= 0.0);
+		assert(this.getPolar() < 180.0);
+	}
+
+	/**
+	 * Asserts that the azimut angle {@link #azimut} of the spheric coordinate is valid.
+	 * 
+	 * @methodtype assert
+	 */
+	private void assertAzimutAngleIsValid() {
+		AbstractCoordinate.assertDoubleIsFinite(this.getAzimut());
+		assert(this.getAzimut() >= 0.0);
+		assert(this.getAzimut() < 360.0);
+	}
+	
+	/**
+	 * Asserts that the radius {@link #radius} of the spheric coordinate is valid.
+	 * 
+	 * @methodtype assert
+	 */
+	private void assertRadiusIsValid() {
+		AbstractCoordinate.assertDoubleIsFinite(this.getRadius());
+		assert(this.getRadius() >= 0.0);
 	}
 	
 }

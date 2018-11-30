@@ -24,25 +24,33 @@ import org.wahlzeit.model.TrainPhoto.Engine;
 import org.wahlzeit.model.TrainPhoto.Type;
 
 /**
- * Factory for creating train photos.
+ * Factory for creating train photos of type {@link TrainPhoto}.
  */
 public class TrainPhotoFactory extends PhotoFactory {
 
 	/**
+	 * Creates a new instance of type {@link TrainPhoto}.
+	 * 
 	 * @methodtype factory
 	 */
+	@Override
 	public TrainPhoto createPhoto() {
 		return new TrainPhoto();
 	}
 
 	/**
+	 * Creates a new instance of type {@link TrainPhoto} with a specified ID.
+	 * 
 	 * @methodtype factory
 	 */
+	@Override
 	public TrainPhoto createPhoto(PhotoId id) {
 		return new TrainPhoto(id);
 	}
 	
 	/**
+	 * Creates a new instance of type {@link TrainPhoto} with given values.
+	 * 
 	 * @methodtype factory
 	 */
 	public TrainPhoto createPhoto(Type type, Engine engine, int speed, int weight, int buildYear) {
@@ -50,8 +58,11 @@ public class TrainPhotoFactory extends PhotoFactory {
 	}
 	
 	/**
+	 * Loads a photo of a train.
+	 * 
 	 * @methodtype factory
 	 */
+	@Override
 	public TrainPhoto loadPhoto(PhotoId id) {
 		return null;
 	}

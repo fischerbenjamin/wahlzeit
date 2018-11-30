@@ -24,9 +24,5 @@ package org.wahlzeit.model;
  * Provides access to train photos and manages them.
  */
 public class TrainPhotoManager extends PhotoManager {
-
-	/**
-	 * Nothing to do here.
-	 */
-	
+	// Nothing to do here.
 }

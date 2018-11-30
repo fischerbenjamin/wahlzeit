@@ -22,59 +22,63 @@ package org.wahlzeit.model;
 
 /**	
  * This class is used to store information about the location
- * of a photo.
+ * of a photo. A location is defined by two properties:
+ * 	{@link #coordinate}		coordinate of the location
+ * 	{@link #name}			name of the location
  */
 public class Location {
-
-	/**
-	 * This constant is used to check if two locations
-	 * are equal. They can be considered as equal when
-	 * the distance between these two locations is at most
-	 * EPSILON.
-	 */
-	public static final double EPSILON = 10e-9;
+	
+	private final String name;					// Name of the location.
+	private final Coordinate coordinate;		// Coordinate of the location.
 	
 	/**
-	 * Cartesian coordinate of the location.
-	 */
-	private Coordinate coordinate;
-	
-	/**
+	 * Creates a new instance of {@link Location} with a given
+	 * coordinate of type {@link Coordinate}.
+	 * 
 	 * @methodtype constructor
 	 */
-	public Location(Coordinate coordinate) {
+	public Location(Coordinate coordinate, String name) {
+		//@PRE
+		AbstractCoordinate.assertCoordinateIsNotNull(coordinate);
+		coordinate.assertClassInvariants();
+		assert(name != null);
+		//@PRE
+		this.name = name;
 		this.coordinate = coordinate;
 	}
 	
 	/**
-	 * @methodtype set
-	 */
-	public void setCoordinate(Coordinate coordinate) {
-		this.coordinate = coordinate;
-	}
-
-	/**
+	 * Returns the coordinate {@link #coordinate} of a location.
+	 * 
 	 * @methodtype get
 	 */
 	public Coordinate getCoordinate() {
 		return this.coordinate;
 	}
+
+	/**
+	 * Returns the name {@link #name} of a location.
+	 * 
+	 * @methodtype get
+	 */
+	public String getName() {
+		return this.name;
+	}
 	
 	/**
+	 * Checks if two locations are equal. Therefore, their coordinates and names must be equal. 
+	 * 
 	 * @methodtype comparison
-	 *
-	 * Checks if two locations are the same. They are considered
-	 * as equal when their distance to each other is at most
-	 * EPSILON.
 	 */
 	public boolean equals(Object obj) {
+		// No further restrictions on the preconditions here because an object of type Object is passed.
 		if (obj == null) {
 			return false;
 		}
 		if (obj instanceof Location) {
 			Location location = (Location) obj;
-			double distance = this.getCoordinate().getCartesianDistance(location.getCoordinate()); 
-			if (distance < EPSILON) {
+			// A location must have a valid coordinate at this point.
+			if (this.getCoordinate().isEqual(location.getCoordinate()) && this.getName() == location.getName()) {
 				return true;
 			}
 		}

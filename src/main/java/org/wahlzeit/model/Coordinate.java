@@ -20,18 +20,56 @@
 
 package org.wahlzeit.model;
 
+/**
+ * Coordinate interface for the wahlzeit application.
+ */
 public interface Coordinate {
 
+	/**
+	 * Accuracy for all double comparisons in the coordinate context. 
+	 */
 	final double EPSILON = 10E-9;
 	
+	/**
+	 * Converts a coordinate into a coordinate of type {@link CartesianCoordinate}.
+	 * 
+	 * @methodtpye conversion
+	 */
 	CartesianCoordinate asCartesianCoordinate();
-	
-	double getCartesianDistance(Coordinate coordinate);
-	
+
+	/**
+	 * Converts a coordinate into a coordinate of type {@link SphericCoordinate}.
+	 * 
+	 * @methodtype conversion
+	 */
 	SphericCoordinate asSphericCoordinate();
 	
-	double getCentralAngle(Coordinate coordinate);
+	/**
+	 * Computes and returns the Cartesian distance between two coordinates.
+	 * 
+	 * @methodtype get
+	 */
+	double getCartesianDistance(final Coordinate coordinate);
+
+	/**
+	 * Computes and returns the central angle distance between two coordinates.
+	 * 
+	 * @methodtype get
+	 */	
+	double getCentralAngle(final Coordinate coordinate);
 	
-	boolean isEqual(Coordinate coordinate);
+	/**
+	 * Checks if two coordinates are equal.
+	 * 
+	 * @methodtype boolean query
+	 */
+	boolean isEqual(final Coordinate coordinate);
 	
+	/**
+	 * Asserts that the coordinate is valid.
+	 * 
+	 * @methodtype assert
+	 */
+	void assertClassInvariants();
+
 }
