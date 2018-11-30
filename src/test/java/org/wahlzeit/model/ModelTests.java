@@ -28,7 +28,7 @@ import org.junit.runners.*;
 	AccessRightsTest.class,
 	CartesianCoordinateTest.class,
 	SphericCoordinateTest.class,
-	CoordinateTest.class,
+	AbstractCoordinateTest.class,
 	FlagReasonTest.class,
 	GenderTest.class,
 	GuestTest.class,

@@ -20,71 +20,103 @@
 
 package org.wahlzeit.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.assertEquals;
 
 public class SphericCoordinateTest {
-	
-	private static final double DEFAULT = 42.0;
-	private static final double EPSILON = 10E-9;
-	
-	private SphericCoordinate sphericCoordinateA;
-	private SphericCoordinate sphericCoordinateD;
+
+	private SphericCoordinate sphericA;
+	private SphericCoordinate sphericB;
 	private CartesianCoordinate cartesianA;
-	
+	private CartesianCoordinate cartesianB;
+
 	@Before
 	public void setUp() {
-		sphericCoordinateA = new SphericCoordinate(Math.toDegrees(0.75*Math.PI), Math.toDegrees(0.75*Math.PI), 2);
-		sphericCoordinateD = sphericCoordinateA.asSphericCoordinate();
+		sphericA = new SphericCoordinate(135.0, 135.0, 2.0);
+		sphericB = new SphericCoordinate(54.735610317245, 135.0, 1.7320508075689);
 		cartesianA = new CartesianCoordinate(-1.0, 1.0, -Math.sqrt(2));
+		cartesianB = new CartesianCoordinate(-1.0, 1.0, 1.0);
 	}
 
 	@Test
-	public void testAsSphericCoordinate() {
-		assertFalse(sphericCoordinateD == sphericCoordinateA);
+	public void testAsSphericCoordinateA() {
+		SphericCoordinate converted = sphericA.asSphericCoordinate();
+		assertEquals(converted.getPolar(), sphericA.getPolar(), Coordinate.EPSILON);
+		assertEquals(converted.getAzimut(), sphericA.getAzimut(), Coordinate.EPSILON);
+		assertEquals(converted.getRadius(), sphericA.getRadius(), Coordinate.EPSILON);
 	}
 	
 	@Test
-	public void testAsSphericCoordinateValues() {
-		assertEquals(sphericCoordinateA.getPolar(), sphericCoordinateD.getPolar());
-		assertEquals(sphericCoordinateA.getAzimut(), sphericCoordinateD.getAzimut());
-		assertEquals(sphericCoordinateA.getRadius(), sphericCoordinateD.getRadius(), EPSILON);
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void testPolarAngleNegative() {
-		SphericCoordinate tmp = new SphericCoordinate(-1.0, DEFAULT, DEFAULT);
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void testPolarAnglePostive() {
-		SphericCoordinate tmp = new SphericCoordinate(181.0, DEFAULT, DEFAULT);
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void testAzimutAnglePostive() {
-		SphericCoordinate tmp = new SphericCoordinate(DEFAULT, 361.0, DEFAULT);
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void testAzimutAngleNegative() {
-		SphericCoordinate tmp = new SphericCoordinate(DEFAULT, -1.0, DEFAULT);
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void testRadiusNegative() {
-		SphericCoordinate tmp = new SphericCoordinate(DEFAULT, DEFAULT, -1.0);
+	public void testAsSphericCoordinateB() {
+		SphericCoordinate converted = sphericB.asSphericCoordinate();
+		assertEquals(converted.getPolar(), sphericB.getPolar(), Coordinate.EPSILON);
+		assertEquals(converted.getAzimut(), sphericB.getAzimut(), Coordinate.EPSILON);
+		assertEquals(converted.getRadius(), sphericB.getRadius(), Coordinate.EPSILON);
 	}
 	
 	@Test
-	public void testAsCartesianCoordinate() {
-		CartesianCoordinate testA = sphericCoordinateA.asCartesianCoordinate();
-		assertEquals(testA.getX(), cartesianA.getX(), EPSILON);
-		assertEquals(testA.getY(), cartesianA.getY(), EPSILON);
-		assertEquals(testA.getZ(), cartesianA.getZ(), EPSILON);
+	public void testAsCartesianCoordinateA() {
+		CartesianCoordinate converted = sphericA.asCartesianCoordinate();
+		assertEquals(converted.getX(), cartesianA.getX(), Coordinate.EPSILON);
+		assertEquals(converted.getY(), cartesianA.getY(), Coordinate.EPSILON);
+		assertEquals(converted.getZ(), cartesianA.getZ(), Coordinate.EPSILON);
+	}
+
+	@Test
+	public void testAsCartesianCoordinateB() {
+		CartesianCoordinate converted = sphericB.asCartesianCoordinate();
+		assertEquals(converted.getX(), cartesianB.getX(), Coordinate.EPSILON);
+		assertEquals(converted.getY(), cartesianB.getY(), Coordinate.EPSILON);
+		assertEquals(converted.getZ(), cartesianB.getZ(), Coordinate.EPSILON);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidPolar() {
+		@SuppressWarnings("unused")
+		SphericCoordinate tmp = new SphericCoordinate(Double.NaN, 0, 0);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidPolar2() {
+		@SuppressWarnings("unused")
+		SphericCoordinate tmp = new SphericCoordinate(0-Coordinate.EPSILON, 0, 0);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidPolar3() {
+		@SuppressWarnings("unused")
+		SphericCoordinate tmp = new SphericCoordinate(180, 0, 0);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidAzimut() {
+		@SuppressWarnings("unused")
+		SphericCoordinate tmp = new SphericCoordinate(0, Double.NEGATIVE_INFINITY, 0);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidAzimut2() {
+		@SuppressWarnings("unused")
+		SphericCoordinate tmp = new SphericCoordinate(0, 0-Coordinate.EPSILON, 0);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidAzimut3() {
+		@SuppressWarnings("unused")
+		SphericCoordinate tmp = new SphericCoordinate(0, 360, 0);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidRadius() {
+		@SuppressWarnings("unused")
+		SphericCoordinate tmp = new SphericCoordinate(0, 0, Double.POSITIVE_INFINITY);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidRadius2() {
+		@SuppressWarnings("unused")
+		SphericCoordinate tmp = new SphericCoordinate(0, 0, 0-Coordinate.EPSILON);
 	}
 	
 }

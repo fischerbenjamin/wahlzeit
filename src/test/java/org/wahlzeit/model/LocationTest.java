@@ -26,33 +26,39 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Component test for class: Location.
+ * Component test for class {@link Location}.
  */
 public class LocationTest {
 
-	protected Location locationA;
-	protected Location locationB;
-	protected Location locationC;
-	protected CartesianCoordinate coordinateA;
-	protected CartesianCoordinate coordinateB;
-	protected CartesianCoordinate coordinateC;
+	private Location locationA;
+	private Location locationB;
+	private Location locationC;
+	
+	@SuppressWarnings("unused")
+	private Location tmp;
 	
 	@Before
 	public void setUp() {
-		coordinateA = new CartesianCoordinate(1.0, 2.0, 3.0);
-		coordinateB = new CartesianCoordinate(-3.0, -2.0, -1.0);
-		locationA = new Location(coordinateA);
-		locationB = new Location(coordinateB);
-		coordinateC = new CartesianCoordinate(-3.0000000001, -2.0, -1.0);
-		locationC = new Location(coordinateC);
+		locationA = new Location(new CartesianCoordinate(1.0, 2.0, 3.0), "locA");
+		locationB = new Location(new CartesianCoordinate(-3.0, -2.0, -1.0), "locB");
+		locationC = new Location(new CartesianCoordinate(-3.0-Coordinate.EPSILON*10E-2, -2.0, -1.0), "locB");
 	}
 
 	@Test
-	public void testLocation() {
-		assertFalse(locationA.getCoordinate().equals(locationB.getCoordinate()));
-		assertTrue(locationA.getCoordinate().equals(coordinateA));
-		assertFalse(locationA.getCoordinate().equals(null));
+	public void testValidLocation() {
+		assertFalse(locationA.equals(locationB));
+		assertTrue(locationA.equals(locationA));
 		assertTrue(locationB.equals(locationC));
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidCoordinate() {
+		tmp = new Location(null, "foo");
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testInvalidName() {
+		tmp = new Location(new CartesianCoordinate(0, 0, 0), null);
 	}
 	
 }

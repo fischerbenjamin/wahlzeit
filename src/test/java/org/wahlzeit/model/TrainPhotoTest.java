@@ -32,29 +32,29 @@ public class TrainPhotoTest {
 		photo = new TrainPhoto();
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = AssertionError.class)
 	public void testInvalidType() {
 		photo.setType(null);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = AssertionError.class)
 	public void testInvalidEngine() {
 		photo.setEngine(null);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = AssertionError.class)
 	public void testInvalidSpeed() {
 		photo.setSpeed(-1);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = AssertionError.class)
 	public void testInvalidWeight() {
-		photo.setWeight(-100);
+		photo.setWeight(-1);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = AssertionError.class)
 	public void testInvalidBuildYear() {
-		photo.setBuildYear(-10000);
+		photo.setBuildYear(-1);
 	}
 	
 	@Test
