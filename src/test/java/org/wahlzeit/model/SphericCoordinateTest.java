@@ -21,6 +21,7 @@
 package org.wahlzeit.model;
 
 import org.junit.Test;
+import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
 import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 
@@ -40,7 +41,7 @@ public class SphericCoordinateTest {
 	}
 
 	@Test
-	public void testAsSphericCoordinateA() {
+	public void testAsSphericCoordinateA() throws InvalidCoordinateStateException {
 		SphericCoordinate converted = sphericA.asSphericCoordinate();
 		assertEquals(converted.getPolar(), sphericA.getPolar(), Coordinate.EPSILON);
 		assertEquals(converted.getAzimut(), sphericA.getAzimut(), Coordinate.EPSILON);
@@ -48,7 +49,7 @@ public class SphericCoordinateTest {
 	}
 	
 	@Test
-	public void testAsSphericCoordinateB() {
+	public void testAsSphericCoordinateB() throws InvalidCoordinateStateException {
 		SphericCoordinate converted = sphericB.asSphericCoordinate();
 		assertEquals(converted.getPolar(), sphericB.getPolar(), Coordinate.EPSILON);
 		assertEquals(converted.getAzimut(), sphericB.getAzimut(), Coordinate.EPSILON);
@@ -56,7 +57,7 @@ public class SphericCoordinateTest {
 	}
 	
 	@Test
-	public void testAsCartesianCoordinateA() {
+	public void testAsCartesianCoordinateA() throws InvalidCoordinateStateException {
 		CartesianCoordinate converted = sphericA.asCartesianCoordinate();
 		assertEquals(converted.getX(), cartesianA.getX(), Coordinate.EPSILON);
 		assertEquals(converted.getY(), cartesianA.getY(), Coordinate.EPSILON);
@@ -64,56 +65,56 @@ public class SphericCoordinateTest {
 	}
 
 	@Test
-	public void testAsCartesianCoordinateB() {
+	public void testAsCartesianCoordinateB() throws InvalidCoordinateStateException {
 		CartesianCoordinate converted = sphericB.asCartesianCoordinate();
 		assertEquals(converted.getX(), cartesianB.getX(), Coordinate.EPSILON);
 		assertEquals(converted.getY(), cartesianB.getY(), Coordinate.EPSILON);
 		assertEquals(converted.getZ(), cartesianB.getZ(), Coordinate.EPSILON);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidPolar() {
 		@SuppressWarnings("unused")
 		SphericCoordinate tmp = new SphericCoordinate(Double.NaN, 0, 0);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidPolar2() {
 		@SuppressWarnings("unused")
 		SphericCoordinate tmp = new SphericCoordinate(0-Coordinate.EPSILON, 0, 0);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidPolar3() {
 		@SuppressWarnings("unused")
 		SphericCoordinate tmp = new SphericCoordinate(180, 0, 0);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidAzimut() {
 		@SuppressWarnings("unused")
 		SphericCoordinate tmp = new SphericCoordinate(0, Double.NEGATIVE_INFINITY, 0);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidAzimut2() {
 		@SuppressWarnings("unused")
 		SphericCoordinate tmp = new SphericCoordinate(0, 0-Coordinate.EPSILON, 0);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidAzimut3() {
 		@SuppressWarnings("unused")
 		SphericCoordinate tmp = new SphericCoordinate(0, 360, 0);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidRadius() {
 		@SuppressWarnings("unused")
 		SphericCoordinate tmp = new SphericCoordinate(0, 0, Double.POSITIVE_INFINITY);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidRadius2() {
 		@SuppressWarnings("unused")
 		SphericCoordinate tmp = new SphericCoordinate(0, 0, 0-Coordinate.EPSILON);

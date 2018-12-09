@@ -20,6 +20,9 @@
 
 package org.wahlzeit.model;
 
+import org.wahlzeit.model.exceptions.InvalidCoordinateCalculationException;
+import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
+
 /**
  * This is an abstract superclass for the concrete implementations of
  * three-dimensional coordinates. Currently, two representations are
@@ -29,39 +32,74 @@ public abstract class AbstractCoordinate implements Coordinate {
 	
 	/**
 	 * Converts a coordinate into a Cartesian coordinate.
+	 * Wrapper for {@link #doAsCartesianCoordinate()}.
 	 * 
 	 * @methodtype conversion
 	 */
-	public abstract CartesianCoordinate asCartesianCoordinate();
+	public abstract CartesianCoordinate asCartesianCoordinate() throws InvalidCoordinateStateException;
+	
+	/**
+	 * Converts a coordinate into a Cartesian coordinate.
+	 * 
+	 * @methodtype conversion
+	 */
+	protected abstract CartesianCoordinate doAsCartesianCoordinate();
+	
+	/**
+	 * Converts a coordinate into a spheric coordinate.
+	 * Wrapper for {@link #doAsSphericCoordinate()}.
+	 * 
+	 * @methodtype conversion
+	 */
+	public abstract SphericCoordinate asSphericCoordinate() throws InvalidCoordinateStateException;
 	
 	/**
 	 * Converts a coordinate into a spheric coordinate.
 	 * 
 	 * @methodtype conversion
 	 */
-	public abstract SphericCoordinate asSphericCoordinate();
+	protected abstract SphericCoordinate doAsSphericCoordinate();
 	
 	/**
-	 * Asserts that a coordinate is valid.
+	 * Wrapper method for {@link #doGetCartesianDistance(Coordinate)}.
 	 * 
-	 * @methodtype assert
+	 * @param coordinate	coordinate to compute the distance to
+	 * @return distance between both coordinates
+	 * @throws InvalidCoordinateCalculationException	if a negative distance was computed
+	 * @throws InvalidCoordinateStateException	if class invariants were violated 
+	 * @methodtype get
 	 */
-	public abstract void assertClassInvariants();
+	public double getCartesianDistance(Coordinate coordinate)
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException {
+		try {
+			double distance = doGetCartesianDistance(coordinate);
+			return distance;
+		} catch (IllegalArgumentException e) {
+			throw new InvalidCoordinateCalculationException("Calculation returned a negative distance");
+		} catch (IllegalStateException e) {
+			throw new InvalidCoordinateStateException("Class invariants were violated during calculation");
+		}
+	}
 	
 	/**
 	 * Computes and returns the Cartesian distance between two coordinates.
 	 * Therefore, the Cartesian representation of both coordinates is used.
 	 * 
+	 * @param coordinate	coordinate to compute the distance to
+	 * @return distance between both coordinates
+	 * @throws InvalidCoordinateStateException	if conversion of coordinate into a Cartesian coordinate failed
+	 * @throws IllegalStateException	if class invariants were violated
+	 * @throws IllegalArgumentException	if a negative distance was calculated
 	 * @methodtype get
 	 */
-	public double getCartesianDistance(Coordinate coordinate) {
+	protected double doGetCartesianDistance(Coordinate coordinate) 
+			throws IllegalStateException, IllegalArgumentException, InvalidCoordinateStateException {
 		//@PRE
 		assertCoordinateIsNotNull(coordinate);
 		this.assertClassInvariants();
-		coordinate.assertClassInvariants();
 		//@PRE
-		CartesianCoordinate self = this.asCartesianCoordinate();
-		CartesianCoordinate other = coordinate.asCartesianCoordinate();
+		CartesianCoordinate self = this.doAsCartesianCoordinate();
+		CartesianCoordinate other = coordinate.asCartesianCoordinate(); // Simply propagate this exception.
 		double distance = Math.pow(self.getX() - other.getX(), 2);
 		distance += Math.pow(self.getY() - other.getY(), 2);
 		distance += Math.pow(self.getZ() - other.getZ(), 2);
@@ -69,27 +107,54 @@ public abstract class AbstractCoordinate implements Coordinate {
 		//@POST
 		assertDistanceIsNotNegative(distance);
 		this.assertClassInvariants();
-		coordinate.assertClassInvariants();
+		other.assertClassInvariants();
 		//@POST
 		return distance;
 	}
 
+	/**
+	 * Wrapper method for the computation of the central angle between two coordinates.
+	 * Calculation is done by {@link #doGetCentralAngle(Coordinate)}.
+	 * 
+	 * @param coordinate	coordinate to compute the central angle to
+	 * @return central angle between both coordinates
+	 * @throws InvalidCoordinateCalculationException	if the calculation computed an invalid angle
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
+	 * @methodtype get
+	 */
+	public double getCentralAngle(Coordinate coordinate)
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException {
+		try {
+			double angle = doGetCentralAngle(coordinate);
+			return angle;
+		} catch (IllegalArgumentException e) {
+			throw new InvalidCoordinateCalculationException("Calculation returned an invalid angle");
+		} catch (IllegalStateException e) {
+			throw new InvalidCoordinateStateException("Class invariants were violated");
+		}
+	}
+	
 	/**
 	 * Computes and returns the central angle between two coordinates.
 	 * Therefore, they must be located on the same sphere. Otherwise, an exception
 	 * of type {@link IllegalArgumentException} is thrown indicating this error.
 	 * The spheric representation of both coordinates is used for this calculation.
 	 * 
+	 * @param coordinate coordinate to compute the central angle to
+	 * @return the central angle between both coordinates
+	 * @throws IllegalArgumentException	if the calculation failed
+	 * @throws IllegalStateException	if class invariants were violated
+	 * @throws InvalidCoordinateStateException 
 	 * @methodtype get
 	 */
-	public double getCentralAngle(Coordinate coordinate) {
+	protected double doGetCentralAngle(Coordinate coordinate) 
+			throws IllegalArgumentException, IllegalStateException, InvalidCoordinateStateException {
 		//@PRE
 		assertCoordinateIsNotNull(coordinate);
 		this.assertClassInvariants();
-		coordinate.assertClassInvariants();
 		//@PRE
-		SphericCoordinate self = this.asSphericCoordinate();
-		SphericCoordinate other = coordinate.asSphericCoordinate();
+		SphericCoordinate self = this.doAsSphericCoordinate();
+		SphericCoordinate other = coordinate.asSphericCoordinate(); // Simply propagate this exception.
 		// Verify that both coordinates are located on the same sphere.
 		if (Math.abs(self.getRadius() - other.getRadius()) >= Coordinate.EPSILON) {
 			throw new IllegalArgumentException("Coordinates must be on the same sphere.");
@@ -106,64 +171,102 @@ public abstract class AbstractCoordinate implements Coordinate {
 				* Math.cos(Math.toRadians(Math.abs(self.getAzimut()-other.getAzimut())));
 		double result = Math.atan2(Math.sqrt(numA + numB), den);
 		//@POST
-		assertDistanceIsNotNegative(result);
+		assertDoubleIsFinite(result);
 		this.assertClassInvariants();
-		coordinate.assertClassInvariants();
+		other.assertClassInvariants();
 		//@POST
 		return result;
 	}
 
 	/**
+	 * Wrapper method for {@link #doIsEqual(Coordinate)}.
+	 * 
+	 * @param coordinate coordinate to compare
+	 * @return true if they are equal, false otherwise
+	 * @throws InvalidCoordinateStateException if one of the coordinates violated the class invariants
+	 * @methodtype boolean query
+	 */
+	public boolean isEqual(Coordinate coordinate) throws InvalidCoordinateStateException {
+		try {
+			boolean equality = doIsEqual(coordinate);
+			return equality;
+		} catch (IllegalStateException e) {
+			throw new InvalidCoordinateStateException("Class invariants were violated");
+		}
+	}
+	
+	/**
 	 * Checks if two coordinates are equal by converting both coordinates into
 	 * Cartesian coordinates and comparing each dimension.
 	 * 
+	 * @param coordinate coordinate to compare
+	 * @return true if they are equal, false otherwise
+	 * @throws IllegalStateException if one of the coordinates violated the class invariants
+	 * @throws InvalidCoordinateStateException	if the conversion of coordinate into a Cartesian coordinate failed
 	 * @methodtype boolean query
 	 */
-	public boolean isEqual(Coordinate coordinate) {
+	protected boolean doIsEqual(Coordinate coordinate) throws IllegalStateException, InvalidCoordinateStateException {
 		//@PRE
 		assertCoordinateIsNotNull(coordinate);
 		this.assertClassInvariants();
-		coordinate.assertClassInvariants();
 		//@PRE
-		CartesianCoordinate self = this.asCartesianCoordinate();
+		CartesianCoordinate self = this.doAsCartesianCoordinate();
 		CartesianCoordinate other = coordinate.asCartesianCoordinate();
 		boolean dx = Math.abs(self.getX() - other.getX()) < Coordinate.EPSILON;
 		boolean dy = Math.abs(self.getY() - other.getY()) < Coordinate.EPSILON;
 		boolean dz = Math.abs(self.getZ() - other.getZ()) < Coordinate.EPSILON;
 		//@POST
 		this.assertClassInvariants();
-		coordinate.assertClassInvariants();
+		other.assertClassInvariants();
 		//@POST
 		return dx && dy && dz;
 	}
+
+	/**
+	 * Asserts that a coordinate is valid.
+	 * 
+	 * @throws IllegalStateException	if these invariants were violated
+	 * @methodtype assert
+	 */
+	protected abstract void assertClassInvariants() throws IllegalStateException;
 	
 	/**
 	 * Asserts that the given double value is finite.
 	 * 
+	 * @param x	double value to check
+	 * @throws IllegalArgumentException	if the passed value is not finite		
 	 * @methodtype assert
 	 */
-	protected static void assertDoubleIsFinite(double x) {
-		assert(Double.isFinite(x));
+	protected static void assertDoubleIsFinite(double x) throws IllegalArgumentException {
+		if (!Double.isFinite(x)) {
+			throw new IllegalArgumentException("Double must be finite.");
+		}
 	}
 
 	/**
 	 * Asserts that the given coordinate is not null.
 	 * 
+	 * @param coordinate coordinate object to check
+	 * @throws NullPointerException	if the coordinate is null
 	 * @methodtype assert
-	 * @param coordinate
 	 */
-	protected static void assertCoordinateIsNotNull(Coordinate coordinate) {
-		assert(coordinate != null);
+	protected static void assertCoordinateIsNotNull(Coordinate coordinate) throws NullPointerException {
+		if (coordinate == null) {
+			throw new NullPointerException("Coordinate must not be null.");
+		}
 	}
 
 	/**
 	 * Assert that the given distance is positive or 0.
 	 * 
+	 * @param distance	distance to check
+	 * @throws IllegalArgumentException	if distance is less than 0	
 	 * @methodtype assert
-	 * @param coordinate
 	 */
-	protected static void assertDistanceIsNotNegative(double distance) {
-		assert(distance >= 0.0);
+	protected static void assertDistanceIsNotNegative(double distance) throws IllegalArgumentException {
+		if (distance < 0) {
+			throw new IllegalArgumentException("Distance must be positive or 0.");
+		}
 	}
 	
 }

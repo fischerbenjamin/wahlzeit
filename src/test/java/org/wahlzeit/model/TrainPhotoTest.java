@@ -1,11 +1,12 @@
 package org.wahlzeit.model;
 
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.wahlzeit.model.Train.Engine;
+import org.wahlzeit.model.Train.Type;
 import org.wahlzeit.testEnvironmentProvider.LocalDatastoreServiceTestConfigProvider;
 import org.wahlzeit.testEnvironmentProvider.RegisteredOfyEnvironmentProvider;
 import org.wahlzeit.testEnvironmentProvider.SysConfigProvider;
@@ -17,7 +18,7 @@ import org.wahlzeit.testEnvironmentProvider.UserSessionProvider;
  */
 public class TrainPhotoTest {
 
-	private TrainPhoto photo;
+	protected TrainPhoto photo;
 
 	@ClassRule
 	public static RuleChain ruleChain = RuleChain.
@@ -32,35 +33,29 @@ public class TrainPhotoTest {
 		photo = new TrainPhoto();
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidType() {
-		photo.setType(null);
+		new Train(null, Engine.UNKNOWN, Train.DEFAULT, Train.DEFAULT, Train.DEFAULT);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidEngine() {
-		photo.setEngine(null);
+		new Train(Type.UNKNOWN, null, Train.DEFAULT, Train.DEFAULT, Train.DEFAULT);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidSpeed() {
-		photo.setSpeed(-1);
+		new Train(Type.UNKNOWN, Engine.UNKNOWN, -1, Train.DEFAULT, Train.DEFAULT);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidWeight() {
-		photo.setWeight(-1);
+		new Train(Type.UNKNOWN, Engine.UNKNOWN, Train.DEFAULT, -1, Train.DEFAULT);
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidBuildYear() {
-		photo.setBuildYear(-1);
-	}
-	
-	@Test
-	public void testDefaultInit() {
-		assertEquals(photo.getEngine(), TrainPhoto.Engine.UNKNOWN);
-		assertEquals(photo.getType(), TrainPhoto.Type.UNKNOWN);
+		new Train(Type.UNKNOWN, Engine.UNKNOWN, Train.DEFAULT, Train.DEFAULT, -1);
 	}
 	
 }

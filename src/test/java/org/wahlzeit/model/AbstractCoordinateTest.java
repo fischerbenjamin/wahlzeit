@@ -22,6 +22,9 @@ package org.wahlzeit.model;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.wahlzeit.model.exceptions.InvalidCoordinateCalculationException;
+import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -46,13 +49,17 @@ public class AbstractCoordinateTest {
 		sphericC = new SphericCoordinate(45, 30, 2);
 	}
 
-	@Test(expected = AssertionError.class)
-	public void testGetCartesianDistanceNull() {
+	@Test(expected = NullPointerException.class)
+	public void testGetCartesianDistanceNull() 
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException 
+	{
 		cartesianA.getCartesianDistance(null);
 	}
 	
 	@Test
-	public void testGetCartesianDistanceBothCartesian() {
+	public void testGetCartesianDistanceBothCartesian() 
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException 
+	{
 		assertEquals(3, cartesianA.getCartesianDistance(cartesianB), Coordinate.EPSILON);
 		assertEquals(3, cartesianB.getCartesianDistance(cartesianA), Coordinate.EPSILON);
 		assertEquals(0, cartesianB.getCartesianDistance(cartesianB), Coordinate.EPSILON);
@@ -60,7 +67,9 @@ public class AbstractCoordinateTest {
 	}
 	
 	@Test
-	public void testGetCartesianDistanceBothSpheric() {
+	public void testGetCartesianDistanceBothSpheric() 
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException 
+	{
 		assertEquals(Math.sqrt(84), sphericA.getCartesianDistance(sphericB), Coordinate.EPSILON);
 		assertEquals(Math.sqrt(84), sphericB.getCartesianDistance(sphericA), Coordinate.EPSILON);
 		assertEquals(0, sphericB.getCartesianDistance(sphericB), Coordinate.EPSILON);
@@ -68,45 +77,56 @@ public class AbstractCoordinateTest {
 	}
 	
 	@Test
-	public void testGetCartesianDistance() {
+	public void testGetCartesianDistance() 
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException 
+	{
 		assertEquals(Math.sqrt(3), cartesianA.getCartesianDistance(sphericA), Coordinate.EPSILON);
 		assertEquals(Math.sqrt(126.14213562373), cartesianB.getCartesianDistance(sphericB), Coordinate.EPSILON);
 		assertEquals(Math.sqrt(6), cartesianB.getCartesianDistance(sphericA), Coordinate.EPSILON);
 		assertEquals(Math.sqrt(68.857864376269), cartesianA.getCartesianDistance(sphericB), Coordinate.EPSILON);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void testGetCentralAngleDiffferentSphere() {
+	@Test(expected = InvalidCoordinateCalculationException.class)
+	public void testGetCentralAngleDiffferentSphere() 
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException {
 		cartesianA.getCentralAngle(cartesianB);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void testGetCentralAngleDiffferentSphere2() {
+	@Test(expected = InvalidCoordinateCalculationException.class)
+	public void testGetCentralAngleDiffferentSphere2()
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException 
+	{
 		sphericA.getCentralAngle(sphericB);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void testGetCentralAngleDiffferentSphere3() {
+	@Test(expected = InvalidCoordinateCalculationException.class)
+	public void testGetCentralAngleDiffferentSphere3()
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException 
+	{
 		cartesianA.getCentralAngle(sphericB);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void testGetCentralAngleDiffferentSphere4() {
+	@Test(expected = InvalidCoordinateCalculationException.class)
+	public void testGetCentralAngleDiffferentSphere4()
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException
+	{
 		sphericA.getCentralAngle(cartesianB);
 	}
 	
 	@Test
-	public void testGetCentralAngle() {
+	public void testGetCentralAngle() 
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException
+	{
 		assertEquals(0.7190700035, sphericA.getCentralAngle(sphericC), Coordinate.EPSILON);
 	}
 	
-	@Test(expected = AssertionError.class)
-	public void testIsEqualNull() {
+	@Test(expected = NullPointerException.class)
+	public void testIsEqualNull() throws InvalidCoordinateStateException {
 		cartesianA.isEqual(null);
 	}
 	
 	@Test
-	public void testIsEqual() {
+	public void testIsEqual() throws InvalidCoordinateStateException {
 		assertTrue(cartesianA.isEqual(cartesianA));
 		assertFalse(cartesianA.isEqual(cartesianB));
 		assertFalse(sphericB.isEqual(sphericA));

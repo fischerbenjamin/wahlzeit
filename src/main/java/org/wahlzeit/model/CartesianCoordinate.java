@@ -20,12 +20,14 @@
 
 package org.wahlzeit.model;
 
+import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
+
 /**
  * A class representing Cartesian coordinates. A Cartesian coordinate consists
  * of three values:
- * 	{@link #x}:	x-dimension	((-inf;+inf))
- *	{@link #y}:	y-dimension	((-inf;+inf))
- *	{@link #z}:	z-dimension	((-inf;+inf))
+ * 	{@link #x}:	x-dimension	([Double.MIN_VALUE;Double.MAX_VALUE])
+ *	{@link #y}:	y-dimension	([Double.MIN_VALUE;Double.MAX_VALUE])
+ *	{@link #z}:	z-dimension	([Double.MIN_VALUE;Double.MAX_VALUE])
  * All fields are declared as private and final.
  */
 public class CartesianCoordinate extends AbstractCoordinate {
@@ -37,9 +39,14 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	/**
 	 * Create a new Cartesian coordinate with given values.
 	 * 
+	 * @param x	x dimension (must be a finite double value)
+	 * @param y	y dimension (must be a finite double value)
+	 * @param z	z dimension (must be a finite double value)
+	 * @return new Cartesian coordinate
+	 * @throws IllegalArgumentException if one of the arguments is not a finite double value
 	 * @methodtype constructor
 	 */
-	public CartesianCoordinate(double x, double y, double z) {
+	public CartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
 		//@PRE
 		AbstractCoordinate.assertDoubleIsFinite(x);
 		AbstractCoordinate.assertDoubleIsFinite(y);
@@ -48,14 +55,12 @@ public class CartesianCoordinate extends AbstractCoordinate {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		//@POST
-		this.assertClassInvariants();
-		//@POST
 	}
 	
 	/**
 	 * Returns dimension {@link x} of a Cartesian coordinate.
 	 * 
+	 * @return x-dimension
 	 * @methodtype get
 	 */
 	public double getX() {
@@ -65,6 +70,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	/**
 	 * Returns dimension {@link y} of a Cartesian coordinate.
 	 * 
+	 * @return y-dimension
 	 * @methodtype get
 	 */
 	public double getY() {
@@ -74,6 +80,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	/**
 	 * Returns dimension {@link z} of a Cartesian coordinate.
 	 * 
+	 * @return z-dimension
 	 * @methodtype get
 	 */
 	public double getZ() {
@@ -81,13 +88,34 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	}
 	
 	/**
-	 * The conversion of a Cartesian coordinate into a Cartesian
-	 * coordinate is the instance itself.
+	 * Wrapper for {@link #doAsCartesianCoordinate()}.
 	 * 
+	 * @return the coordinate itself
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
 	 * @methodtype conversion
 	 */
 	@Override
-	public CartesianCoordinate asCartesianCoordinate() {
+	public CartesianCoordinate asCartesianCoordinate() throws InvalidCoordinateStateException {
+		//@PRE
+		try {
+			this.assertClassInvariants();
+		} catch (IllegalStateException e) {
+			throw new InvalidCoordinateStateException("Class invariants were violated during conversion");
+		}
+		//@PRE
+		return this;
+	}
+	
+	/**
+	 * The conversion of a Cartesian coordinate into a Cartesian
+	 * coordinate is the instance itself.
+	 * 
+	 * @return the coordinate itself
+	 * @throws IllegalStateException	if class invariants were violated
+	 * @methodtype conversion
+	 */
+	@Override
+	protected CartesianCoordinate doAsCartesianCoordinate() throws IllegalStateException {
 		//@PRE
 		this.assertClassInvariants();
 		//@PRE
@@ -95,13 +123,31 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	}
 	
 	/**
-	 * Converts the Cartesian coordinate into a spheric coordinate and
-	 * returns a new instance of {@link SphericCoordinate}.
+	 * Wrapper for {@link #doAsSphericCoordinate()}.
 	 * 
+	 * @throws InvalidCoordinateException	if class invariants were violated
+	 * @return converted Cartesian coordinate as {@link SphericCoordinate}
 	 * @methodtype conversion
 	 */
 	@Override
-	public SphericCoordinate asSphericCoordinate() {
+	public SphericCoordinate asSphericCoordinate() throws InvalidCoordinateStateException {
+		try {
+			SphericCoordinate converted = doAsSphericCoordinate();
+			return converted;
+		} catch (IllegalStateException e) {
+			throw new InvalidCoordinateStateException("Class invariants were violated during conversion");
+		}
+	}
+	
+	/**
+	 * Converts the Cartesian coordinate into a spheric coordinate and
+	 * returns a new instance of {@link SphericCoordinate}.
+	 * 
+	 * @throws IllegalStateException	if class invariants are violated
+	 * @return the Cartesian coordinate as a spheric coordinate
+	 * @methodtype conversion
+	 */
+	protected SphericCoordinate doAsSphericCoordinate() throws IllegalStateException {
 		//@PRE
 		this.assertClassInvariants();
 		//@PRE
@@ -120,13 +166,17 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	 * Asserts that a Cartesian Coordinate is valid. In order to be valid,
 	 * all dimensions of the coordinate must be valid.
 	 * 
+	 * @throws IllegalStateException
 	 * @methodtype assert
 	 */
 	@Override
-	public void assertClassInvariants() {
-		AbstractCoordinate.assertDoubleIsFinite(this.getX());
-		AbstractCoordinate.assertDoubleIsFinite(this.getY());
-		AbstractCoordinate.assertDoubleIsFinite(this.getZ());		
+	protected void assertClassInvariants() throws IllegalStateException {
+		try {
+			AbstractCoordinate.assertDoubleIsFinite(this.getX());
+			AbstractCoordinate.assertDoubleIsFinite(this.getY());
+			AbstractCoordinate.assertDoubleIsFinite(this.getZ());		
+		} catch (IllegalArgumentException e) {
+			throw new IllegalStateException("Class invariants violated");
+		}
 	}
-	
 }

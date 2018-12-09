@@ -22,45 +22,16 @@ package org.wahlzeit.model;
 
 /**
  * A TrainPhoto represents an uploaded photo of a train by the user.
- * It is characterized by some properties:
- * 	{@link #type}			type of the train
- * 	{@link #engine}			type of the engine the train uses
- * 	{@link #speed}			maximum speed the train can reach
- * 	{@link #weight}			weight of the train
- * 	{@link #buildYear}		the year the train was built
- * All fields are declared as final.
- */
+ * It stores information about a train using a {@link Train} instance.
+ */  
 public class TrainPhoto extends Photo {
-
-	/**
-	 * Default value (used for default constructors).
-	 */
-	private static final int DEFAULT = 1;
 	
 	/**
 	 * Used for serialization.
 	 */
 	private static final long serialVersionUID = -6467518261973525569L;
 
-	/**
-	 * Enum type for the type of a train.
-	 */
-	enum Type {
-		SBAHN, REGIO, ICE, UNKNOWN
-	}
-	
-	/**
-	 * Enum type for the type of the engine of a train.
-	 */
-	enum Engine {
-		ELECTRO, DIESEL, COAL, UNKNOWN
-	}
-	
-	private Type type;			// type of the train
-	private Engine engine;		// type of the engine the train uses
-	private int speed;			// maximum speed the train can reach
-	private int weight;			// weight of the train
-	private int buildYear;		// the year the train was built
+	private final Train train;
 
 	/**
 	 * Default constructor.
@@ -68,11 +39,7 @@ public class TrainPhoto extends Photo {
 	 * @methodtype constructor
 	 */
 	public TrainPhoto() {
-		this.setType(Type.UNKNOWN);
-		this.setEngine(Engine.UNKNOWN);
-		this.setSpeed(TrainPhoto.DEFAULT);
-		this.setWeight(TrainPhoto.DEFAULT);
-		this.setBuildYear(TrainPhoto.DEFAULT);
+		this.train = new Train();
 	}
 	
 	/**
@@ -82,11 +49,7 @@ public class TrainPhoto extends Photo {
 	 */
 	public TrainPhoto(PhotoId myID) {
 		super(myID);
-		this.setType(Type.UNKNOWN);
-		this.setEngine(Engine.UNKNOWN);
-		this.setSpeed(TrainPhoto.DEFAULT);
-		this.setWeight(TrainPhoto.DEFAULT);
-		this.setBuildYear(TrainPhoto.DEFAULT);
+		this.train = new Train();
 	}
 
 	/**
@@ -94,118 +57,33 @@ public class TrainPhoto extends Photo {
 	 * 
 	 * @methodtype constructor
 	 */
-	public TrainPhoto(Type type, Engine engine, int speed, int weight, int buildYear) {
+	public TrainPhoto(Train train) {
 		super();
-		this.setType(type);
-		this.setEngine(engine);
-		this.setSpeed(speed);
-		this.setWeight(weight);
-		this.setBuildYear(buildYear);
+		assertTrainNotNull(train);
+		this.train = train;
 	}
 	
 	/**
-	 * Returns the type {@link #type} of a train. 
+	 * Getter of {@link #train}.
 	 * 
+	 * @return train of the photo
 	 * @methodtype get
 	 */
-	public Type getType() {
-		return this.type;
+	public Train getTrain() {
+		return this.train;
 	}
 	
 	/**
-	 * Returns the engine {@link #engine} of a train. 
+	 * Asserts that a given train object is not null.
 	 * 
-	 * @methodtype get
+	 * @param train train of the photo
+	 * @throws IllegalArgumentException	if train is null
+	 * @methodtype assert
 	 */
-	public Engine getEngine() {
-		return this.engine;
-	}
-	
-	/**
-	 * Returns the speed {@link #speed} of a train. 
-	 * 
-	 * @methodtype get
-	 */
-	public int getSpeed() {
-		return this.speed;
-	}
-	
-	/**
-	 * Returns the weight {@link #weight} of a train. 
-	 * 
-	 * @methodtype get
-	 */
-	public int getWeight() {
-		return this.weight;
-	}
-	
-	/**
-	 * Returns the year the train was built {@link #buildYear}. 
-	 * 
-	 * @methodtype get
-	 */
-	public int getBuildYear() {
-		return this.buildYear;
-	}
-	
-	/**
-	 * Sets the type of a train {@link #type} to the given value.
-	 * 
-	 * @methodtype set
-	 */
-	public void setType(Type type) {
-		//@PRE
-		assert(type != null);
-		//@PRE
-		this.type = type;
-	}
-
-	/**
-	 * Sets the engine of a train {@link #engine} to the given value.
-	 * 
-	 * @methodtype set
-	 */
-	public void setEngine(Engine engine) {
-		//@PRE
-		assert(engine != null);
-		//@PRE
-		this.engine = engine;
-	}
-	
-	/**
-	 * Sets the speed of a train {@link #speed} to the given value.
-	 * 
-	 * @methodtype set
-	 */
-	public void setSpeed(int speed) {
-		//@PRE
-		assert(speed > 0);
-		//@PRE
-		this.speed = speed;
-	}
-	
-	/**
-	 * Sets the weight of a train {@link #weight} to the given value.
-	 * 
-	 * @methodtype set
-	 */
-	public void setWeight(int weight) {
-		//@PRE
-		assert(weight > 0);
-		//@PRE
-		this.weight = weight;
-	}
-	
-	/**
-	 * Sets the year the train was built {@link #buildYear} to the given value.
-	 * 
-	 * @methodtype set
-	 */
-	public void setBuildYear(int buildYear) {
-		//@PRE
-		assert(buildYear > 0);
-		//@PRE
-		this.buildYear = buildYear;
+	private static void assertTrainNotNull(Train train) throws IllegalArgumentException {
+		if (train == null) {
+			throw new IllegalArgumentException("Train must not be null");
+		}
 	}
 
 }

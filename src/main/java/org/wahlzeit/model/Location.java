@@ -20,6 +20,8 @@
 
 package org.wahlzeit.model;
 
+import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
+
 /**	
  * This class is used to store information about the location
  * of a photo. A location is defined by two properties:
@@ -39,8 +41,7 @@ public class Location {
 	 */
 	public Location(Coordinate coordinate, String name) {
 		//@PRE
-		AbstractCoordinate.assertCoordinateIsNotNull(coordinate);
-		coordinate.assertClassInvariants();
+		AbstractCoordinate.assertCoordinateIsNotNull(coordinate);;
 		assert(name != null);
 		//@PRE
 		this.name = name;
@@ -68,6 +69,7 @@ public class Location {
 	/**
 	 * Checks if two locations are equal. Therefore, their coordinates and names must be equal. 
 	 * 
+	 * @param obj	object to compare
 	 * @methodtype comparison
 	 */
 	public boolean equals(Object obj) {
@@ -78,8 +80,12 @@ public class Location {
 		if (obj instanceof Location) {
 			Location location = (Location) obj;
 			// A location must have a valid coordinate at this point.
-			if (this.getCoordinate().isEqual(location.getCoordinate()) && this.getName() == location.getName()) {
-				return true;
+			try {
+				if (this.getCoordinate().isEqual(location.getCoordinate()) && this.getName() == location.getName()) {
+					return true;
+				}
+			} catch (InvalidCoordinateStateException e) {
+				e.printStackTrace();
 			}
 		}
 		return false;

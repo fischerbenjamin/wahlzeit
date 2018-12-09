@@ -20,6 +20,9 @@
 
 package org.wahlzeit.model;
 
+import org.wahlzeit.model.exceptions.InvalidCoordinateCalculationException;
+import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
+
 /**
  * Coordinate interface for the wahlzeit application.
  */
@@ -32,44 +35,46 @@ public interface Coordinate {
 	
 	/**
 	 * Converts a coordinate into a coordinate of type {@link CartesianCoordinate}.
-	 * 
+	 *
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
 	 * @methodtpye conversion
 	 */
-	CartesianCoordinate asCartesianCoordinate();
+	CartesianCoordinate asCartesianCoordinate() throws InvalidCoordinateStateException;
 
 	/**
 	 * Converts a coordinate into a coordinate of type {@link SphericCoordinate}.
 	 * 
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
 	 * @methodtype conversion
 	 */
-	SphericCoordinate asSphericCoordinate();
+	SphericCoordinate asSphericCoordinate() throws InvalidCoordinateStateException;
 	
 	/**
 	 * Computes and returns the Cartesian distance between two coordinates.
 	 * 
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
+	 * @throws InvalidCoordinateCalculationException	if the calculation failed
 	 * @methodtype get
 	 */
-	double getCartesianDistance(final Coordinate coordinate);
+	double getCartesianDistance(final Coordinate coordinate)
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException;
 
 	/**
 	 * Computes and returns the central angle distance between two coordinates.
-	 * 
+	 *
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
+	 * @throws InvalidCoordinateCalculationException	if the calculation failed
 	 * @methodtype get
 	 */	
-	double getCentralAngle(final Coordinate coordinate);
+	double getCentralAngle(final Coordinate coordinate)
+			throws InvalidCoordinateCalculationException, InvalidCoordinateStateException;
 	
 	/**
 	 * Checks if two coordinates are equal.
 	 * 
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
 	 * @methodtype boolean query
 	 */
-	boolean isEqual(final Coordinate coordinate);
+	boolean isEqual(final Coordinate coordinate) throws InvalidCoordinateStateException;
 	
-	/**
-	 * Asserts that the coordinate is valid.
-	 * 
-	 * @methodtype assert
-	 */
-	void assertClassInvariants();
-
 }

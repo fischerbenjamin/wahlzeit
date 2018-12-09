@@ -22,6 +22,8 @@ package org.wahlzeit.model;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.matchers.Null;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -51,7 +53,7 @@ public class LocationTest {
 		assertTrue(locationB.equals(locationC));
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = NullPointerException.class)
 	public void testInvalidCoordinate() {
 		tmp = new Location(null, "foo");
 	}
