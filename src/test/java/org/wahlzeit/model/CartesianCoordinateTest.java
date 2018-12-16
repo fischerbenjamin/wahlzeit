@@ -24,22 +24,38 @@ import org.junit.Test;
 import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
 import org.junit.Before;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class CartesianCoordinateTest {
 	
 	private CartesianCoordinate cartesianA;
 	private CartesianCoordinate cartesianB;
+	private CartesianCoordinate cartesianC;
 	private SphericCoordinate sphericA;
 	private SphericCoordinate sphericB;
 	
 	@Before
 	public void setUp() {
-		cartesianA = new CartesianCoordinate(-1.0, 1.0, -Math.sqrt(2));
-		cartesianB = new CartesianCoordinate(-1.0, 1.0, 1.0);
-		sphericA = new SphericCoordinate(135.0, 135.0, 2.0);
-		sphericB = new SphericCoordinate(54.735610317245, 135.0, 1.7320508075689);
+		cartesianA = CartesianCoordinate.getCartesianCoordinate(-1.0, 1.0, -Math.sqrt(2));
+		cartesianB = CartesianCoordinate.getCartesianCoordinate(-1.0, 1.0, 1.0);
+		cartesianC = CartesianCoordinate.getCartesianCoordinate(-1.0, 1.0, -Math.sqrt(2));
+		sphericA = SphericCoordinate.getSphericCoordinate(135.0, 135.0, 2.0);
+		sphericB = SphericCoordinate.getSphericCoordinate(54.735610317245, 135.0, 1.7320508075689);
 	}
-
+	
+	@Test
+	public void testValueCreate() {
+		assertEquals(cartesianA, cartesianC);
+		assertNotEquals(cartesianA, sphericB);
+	}
+	
+	@Test
+	public void testValueClone() {
+		assertEquals(cartesianA.clone(), cartesianA);
+		assertEquals(cartesianA.clone(), cartesianC);
+		assertEquals(cartesianC.clone(), cartesianA);
+	}
+	
 	@Test
 	public void testAsSphericCoordinateA() throws InvalidCoordinateStateException  {
 		SphericCoordinate converted = cartesianA.asSphericCoordinate();
@@ -75,19 +91,19 @@ public class CartesianCoordinateTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidX() {
 		@SuppressWarnings("unused")
-		CartesianCoordinate tmp = new CartesianCoordinate(Double.NaN, 0, 0);
+		CartesianCoordinate tmp = CartesianCoordinate.getCartesianCoordinate(Double.NaN, 0, 0);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidY() {
 		@SuppressWarnings("unused")
-		CartesianCoordinate	tmp = new CartesianCoordinate(0, Double.NEGATIVE_INFINITY, 0);
+		CartesianCoordinate	tmp = CartesianCoordinate.getCartesianCoordinate(0, Double.NEGATIVE_INFINITY, 0);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidZ() {
 		@SuppressWarnings("unused")
-		CartesianCoordinate tmp = new CartesianCoordinate(0, 0, Double.POSITIVE_INFINITY);
+		CartesianCoordinate tmp = CartesianCoordinate.getCartesianCoordinate(0, 0, Double.POSITIVE_INFINITY);
 	}
 	
 }

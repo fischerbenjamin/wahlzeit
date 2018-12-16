@@ -20,7 +20,8 @@
 
 package org.wahlzeit.model;
 
-import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * A class representing spheric coordinates. A spheric coordinate consists
@@ -32,6 +33,11 @@ import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
  */
 public class SphericCoordinate extends AbstractCoordinate {
 
+	/**
+	 * Stores the values of type {@link SphericCoordinate}.
+	 */
+	private static HashMap<Integer, SphericCoordinate> coordinates = new HashMap<>();
+	
 	private final double polar;		// polar angle of a spheric coordinate.
 	private final double azimut;	// azimut angle of a spheric coordinate.
 	private final double radius;	// radius of a spheric coordinate.
@@ -45,15 +51,39 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @return new instance of {@link SphericCoordinate}
 	 * @methodtype constructor
 	 */
-	public SphericCoordinate(double polar, double azimut, double radius) {
+	private SphericCoordinate(double polar, double azimut, double radius) {
+		this.polar = polar;
+		this.azimut = azimut;
+		this.radius = radius;
+	}
+	
+	/**
+	 * This method is used to maintain the {@link SphericCoordinate} values.
+	 * If the value was already created, it simply returns its reference.
+	 * Otherwise, a new value is created and is added to the map of known values.
+	 * 
+	 * @param polar		polar angle
+	 * @param azimut	azimut angle
+	 * @param radius	radius
+	 * @return	instance of {@link SphericCoordinate} used as a value
+	 * @throws IllegalArgumentException if one of the values is invalid
+	 * @methodtype factory
+	 */
+	public static synchronized SphericCoordinate getSphericCoordinate(double polar, double azimut, double radius)
+		throws IllegalArgumentException
+	{
 		//@PRE
 		assertPolarAngleIsValid(polar);
 		assertAzimutAngleIsValid(azimut);
 		assertRadiusIsValid(radius);
 		//@PRE
-		this.polar = polar;
-		this.azimut = azimut;
-		this.radius = radius;
+		int hash = doHashCode(polar, azimut, radius);
+		if (coordinates.containsKey(hash)) {
+			return coordinates.get(hash);
+		}
+		SphericCoordinate coordinate = new SphericCoordinate(polar, azimut, radius);
+		coordinates.put(coordinate.hashCode(), coordinate);
+		return coordinate;
 	}
 	
 	/**
@@ -85,24 +115,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	public double getRadius() {
 		return this.radius;
 	}
-	
-	/**
-	 * Wrapper for {@link #doAsCartesianCoordinate()}.
-	 * 
-	 * @return this as {@link CartesianCoordinate}
-	 * @throws InvalidCoordinateStateException	if class invariants were violated
-	 * @methodtype conversion
-	 */
-	@Override
-	public CartesianCoordinate asCartesianCoordinate() throws InvalidCoordinateStateException {
-		try {
-			CartesianCoordinate converted = this.doAsCartesianCoordinate();
-			return converted;
-		} catch (IllegalStateException e) {
-			throw new InvalidCoordinateStateException("Class invariants were violated");
-		}
-	}
-	
+		
 	/**
 	 * Converts the spheric coordinate into a Cartesian coordinate and
 	 * returns a new instance of {@link CartesianCoordinate}.
@@ -119,31 +132,12 @@ public class SphericCoordinate extends AbstractCoordinate {
 		double x = this.getRadius() * Math.sin(Math.toRadians(this.getPolar())) * Math.cos(Math.toRadians(this.getAzimut()));
 		double y = this.getRadius() * Math.sin(Math.toRadians(this.getPolar())) * Math.sin(Math.toRadians(this.getAzimut()));
 		double z = this.getRadius() * Math.cos(Math.toRadians(this.getPolar()));
-		CartesianCoordinate converted = new CartesianCoordinate(x, y, z);
+		CartesianCoordinate converted = CartesianCoordinate.getCartesianCoordinate(x, y, z);
 		//@POST
 		this.assertClassInvariants();
 		converted.assertClassInvariants();
 		//@POST
 		return converted;
-	}
-
-	/**
-	 * Wrapper for {@link #doAsSphericCoordinate()}.
-	 * 
-	 * @throws InvalidCoordinateStateException	if class invariants were violated
-	 * @return this
-	 * @methodtype conversion
-	 */
-	@Override
-	public SphericCoordinate asSphericCoordinate() throws InvalidCoordinateStateException {
-		//@PRE
-		try {
-			this.assertClassInvariants();
-		} catch (IllegalStateException e) {
-			throw new InvalidCoordinateStateException("Class invariants were violated");
-		}
-		//@PRE
-		return this;
 	}
 	
 	/**
@@ -160,6 +154,31 @@ public class SphericCoordinate extends AbstractCoordinate {
 		this.assertClassInvariants();
 		//@PRE
 		return this;
+	}
+	
+	/**
+	 * Create hash code for coordinates of type {@link SphericCoordinate}.
+	 * This method forwards the calculation to a private helper method.
+	 * 
+	 * @methodtype get
+	 * @return hash code
+	 */
+	@Override
+	public int hashCode() {
+		return doHashCode(this.getPolar(), this.getAzimut(), this.getRadius());
+	}
+	
+	/**
+	 * Actual implementation of generating hash codes.
+	 * 
+	 * @param polar		polar angle
+	 * @param azimut	azimut angle
+	 * @param radius	radius
+	 * @return hash code
+	 * @methodtype get
+	 */
+	private static int doHashCode(double polar, double azimut, double radius) {
+		return Objects.hash(polar, azimut, radius);
 	}
 	
 	/**

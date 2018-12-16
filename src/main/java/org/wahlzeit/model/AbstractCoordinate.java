@@ -30,35 +30,62 @@ import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
  */
 public abstract class AbstractCoordinate implements Coordinate {
 	
+	
 	/**
 	 * Converts a coordinate into a Cartesian coordinate.
+	 * 
+	 * @methodtype conversion
+	 */
+	protected abstract CartesianCoordinate doAsCartesianCoordinate() throws IllegalStateException;
+	
+	/**
+	 * Converts a coordinate into a spheric coordinate.
+	 * 
+	 * @methodtype conversion
+	 */
+	protected abstract SphericCoordinate doAsSphericCoordinate() throws IllegalStateException;
+	
+	/**
+	 * Values cannot be cloned. 
+	 * 
+	 * @return this 
+	 */
+	@Override
+	protected Object clone() {
+		return this;
+	}
+	
+	/**
 	 * Wrapper for {@link #doAsCartesianCoordinate()}.
 	 * 
+	 * @return this as {@link CartesianCoordinate}
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
 	 * @methodtype conversion
 	 */
-	public abstract CartesianCoordinate asCartesianCoordinate() throws InvalidCoordinateStateException;
+	public CartesianCoordinate asCartesianCoordinate() throws InvalidCoordinateStateException {
+		try {
+			CartesianCoordinate converted = this.doAsCartesianCoordinate();
+			return converted;
+		} catch (IllegalStateException e) {
+			throw new InvalidCoordinateStateException("Class invariants were violated");
+		}
+	}
 	
 	/**
-	 * Converts a coordinate into a Cartesian coordinate.
-	 * 
-	 * @methodtype conversion
-	 */
-	protected abstract CartesianCoordinate doAsCartesianCoordinate();
-	
-	/**
-	 * Converts a coordinate into a spheric coordinate.
 	 * Wrapper for {@link #doAsSphericCoordinate()}.
 	 * 
+	 * @return this as {@link SphericCoordinate}
+	 * @throws InvalidCoordinateStateException	if class invariants were violated
 	 * @methodtype conversion
 	 */
-	public abstract SphericCoordinate asSphericCoordinate() throws InvalidCoordinateStateException;
-	
-	/**
-	 * Converts a coordinate into a spheric coordinate.
-	 * 
-	 * @methodtype conversion
-	 */
-	protected abstract SphericCoordinate doAsSphericCoordinate();
+	public SphericCoordinate asSphericCoordinate() throws InvalidCoordinateStateException {
+		try {
+			SphericCoordinate converted = this.doAsSphericCoordinate();
+			return converted;
+		} catch (IllegalStateException e) {
+			throw new InvalidCoordinateStateException("Class invariants were violated");
+		} 
+	}
 	
 	/**
 	 * Wrapper method for {@link #doGetCartesianDistance(Coordinate)}.
@@ -96,10 +123,9 @@ public abstract class AbstractCoordinate implements Coordinate {
 			throws IllegalStateException, IllegalArgumentException, InvalidCoordinateStateException {
 		//@PRE
 		assertCoordinateIsNotNull(coordinate);
-		this.assertClassInvariants();
 		//@PRE
-		CartesianCoordinate self = this.doAsCartesianCoordinate();
-		CartesianCoordinate other = coordinate.asCartesianCoordinate(); // Simply propagate this exception.
+		CartesianCoordinate self = this.asCartesianCoordinate();
+		CartesianCoordinate other = coordinate.asCartesianCoordinate();
 		double distance = Math.pow(self.getX() - other.getX(), 2);
 		distance += Math.pow(self.getY() - other.getY(), 2);
 		distance += Math.pow(self.getZ() - other.getZ(), 2);
@@ -153,7 +179,7 @@ public abstract class AbstractCoordinate implements Coordinate {
 		assertCoordinateIsNotNull(coordinate);
 		this.assertClassInvariants();
 		//@PRE
-		SphericCoordinate self = this.doAsSphericCoordinate();
+		SphericCoordinate self = this.asSphericCoordinate();
 		SphericCoordinate other = coordinate.asSphericCoordinate(); // Simply propagate this exception.
 		// Verify that both coordinates are located on the same sphere.
 		if (Math.abs(self.getRadius() - other.getRadius()) >= Coordinate.EPSILON) {
@@ -210,7 +236,7 @@ public abstract class AbstractCoordinate implements Coordinate {
 		assertCoordinateIsNotNull(coordinate);
 		this.assertClassInvariants();
 		//@PRE
-		CartesianCoordinate self = this.doAsCartesianCoordinate();
+		CartesianCoordinate self = this.asCartesianCoordinate();
 		CartesianCoordinate other = coordinate.asCartesianCoordinate();
 		boolean dx = Math.abs(self.getX() - other.getX()) < Coordinate.EPSILON;
 		boolean dy = Math.abs(self.getY() - other.getY()) < Coordinate.EPSILON;

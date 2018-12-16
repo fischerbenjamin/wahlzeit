@@ -20,7 +20,8 @@
 
 package org.wahlzeit.model;
 
-import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * A class representing Cartesian coordinates. A Cartesian coordinate consists
@@ -31,6 +32,11 @@ import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
  * All fields are declared as private and final.
  */
 public class CartesianCoordinate extends AbstractCoordinate {
+	
+	/**
+	 * Stores the values of type {@link SphericCoordinate}.
+	 */
+	private static HashMap<Integer, CartesianCoordinate> coordinates = new HashMap<>();
 	
 	private final double x;		// x-dimension
 	private final double y;		// y-dimension
@@ -43,18 +49,37 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	 * @param y	y dimension (must be a finite double value)
 	 * @param z	z dimension (must be a finite double value)
 	 * @return new Cartesian coordinate
-	 * @throws IllegalArgumentException if one of the arguments is not a finite double value
 	 * @methodtype constructor
 	 */
-	public CartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
+	private CartesianCoordinate(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
+	/**
+	 * This method is used to maintain the {@link CartesianCoordinate} values.
+	 * If the value was already created, it simply returns its reference.
+	 * Otherwise, a new value is created and is added to the map of known values.
+	 *
+	 * @param x	x-dimension
+	 * @param y y-dimension
+	 * @param z z-dimension
+	 * @return	instance of {@link CartesianCoordinate} used as a value
+	 */
+	public static synchronized CartesianCoordinate getCartesianCoordinate(double x, double y, double z) {
 		//@PRE
 		AbstractCoordinate.assertDoubleIsFinite(x);
 		AbstractCoordinate.assertDoubleIsFinite(y);
 		AbstractCoordinate.assertDoubleIsFinite(z);
 		//@PRE
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		int hash = doHashCode(x, y, z);
+		if (coordinates.containsKey(hash)) {
+			return coordinates.get(hash);
+		}
+		CartesianCoordinate coordinate = new CartesianCoordinate(x, y, z);
+		coordinates.put(coordinate.hashCode(), coordinate);
+		return coordinate;
 	}
 	
 	/**
@@ -88,25 +113,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	}
 	
 	/**
-	 * Wrapper for {@link #doAsCartesianCoordinate()}.
-	 * 
-	 * @return the coordinate itself
-	 * @throws InvalidCoordinateStateException	if class invariants were violated
-	 * @methodtype conversion
-	 */
-	@Override
-	public CartesianCoordinate asCartesianCoordinate() throws InvalidCoordinateStateException {
-		//@PRE
-		try {
-			this.assertClassInvariants();
-		} catch (IllegalStateException e) {
-			throw new InvalidCoordinateStateException("Class invariants were violated during conversion");
-		}
-		//@PRE
-		return this;
-	}
-	
-	/**
 	 * The conversion of a Cartesian coordinate into a Cartesian
 	 * coordinate is the instance itself.
 	 * 
@@ -120,24 +126,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 		this.assertClassInvariants();
 		//@PRE
 		return this;
-	}
-	
-	/**
-	 * Wrapper for {@link #doAsSphericCoordinate()}.
-	 * 
-	 * @throws InvalidCoordinateException	if class invariants were violated
-	 * @return converted Cartesian coordinate as {@link SphericCoordinate}
-	 * @methodtype conversion
-	 */
-	@Override
-	public SphericCoordinate asSphericCoordinate() throws InvalidCoordinateStateException {
-		try {
-			SphericCoordinate converted = doAsSphericCoordinate();
-			return converted;
-		} catch (IllegalStateException e) {
-			throw new InvalidCoordinateStateException("Class invariants were violated during conversion");
-		}
-	}
+	}	
 	
 	/**
 	 * Converts the Cartesian coordinate into a spheric coordinate and
@@ -145,21 +134,48 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	 * 
 	 * @throws IllegalStateException	if class invariants are violated
 	 * @return the Cartesian coordinate as a spheric coordinate
+	 * @throws InvalidCoordinateCalculationException 
 	 * @methodtype conversion
 	 */
-	protected SphericCoordinate doAsSphericCoordinate() throws IllegalStateException {
+	@Override
+	protected SphericCoordinate doAsSphericCoordinate() throws IllegalStateException{
 		//@PRE
 		this.assertClassInvariants();
 		//@PRE
 		double radius = Math.sqrt(Math.pow(this.getX(), 2) + Math.pow(this.getY(), 2) + Math.pow(this.getZ(), 2));
 		double azimut = Math.toDegrees(Math.atan2(this.getY(), this.getX()));
 		double polar = Math.toDegrees(Math.acos(this.getZ()/radius));
-		SphericCoordinate converted = new SphericCoordinate(polar, azimut, radius);
+		SphericCoordinate converted = SphericCoordinate.getSphericCoordinate(polar, azimut, radius);
 		//@POST
 		converted.assertClassInvariants();
 		this.assertClassInvariants();
 		//@POST
 		return converted;
+	}
+	
+	/**
+	 * Create hash code for coordinates of type {@link CartesianCoordinate}.
+	 * This method forwards the calculation to a private helper method.
+	 * 
+	 * @methodtype get
+	 * @return hash code
+	 */
+	@Override
+	public int hashCode() {
+		return doHashCode(this.getX(), this.getY(), this.getZ());
+	}
+	
+	/**
+	 * Actual implementation of generating hash codes.
+	 * 
+	 * @param x	x-dimension
+	 * @param y y-dimension
+	 * @param z z-dimension
+	 * @return hash code
+	 * @methodtype get
+	 */
+	private static int doHashCode(double x, double y, double z) {
+		return Objects.hash(x, y, z);
 	}
 
 	/**
@@ -179,4 +195,5 @@ public class CartesianCoordinate extends AbstractCoordinate {
 			throw new IllegalStateException("Class invariants violated");
 		}
 	}
+	
 }

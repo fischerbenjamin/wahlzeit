@@ -41,9 +41,9 @@ public class LocationTest {
 	
 	@Before
 	public void setUp() {
-		locationA = new Location(new CartesianCoordinate(1.0, 2.0, 3.0), "locA");
-		locationB = new Location(new CartesianCoordinate(-3.0, -2.0, -1.0), "locB");
-		locationC = new Location(new CartesianCoordinate(-3.0-Coordinate.EPSILON*10E-2, -2.0, -1.0), "locB");
+		locationA = new Location(CartesianCoordinate.getCartesianCoordinate(1.0, 2.0, 3.0), "locA");
+		locationB = new Location(CartesianCoordinate.getCartesianCoordinate(-3.0, -2.0, -1.0), "locB");
+		locationC = new Location(CartesianCoordinate.getCartesianCoordinate(-3.0-Coordinate.EPSILON*10E-2, -2.0, -1.0), "locB");
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class LocationTest {
 	
 	@Test(expected = AssertionError.class)
 	public void testInvalidName() {
-		tmp = new Location(new CartesianCoordinate(0, 0, 0), null);
+		tmp = new Location(CartesianCoordinate.getCartesianCoordinate(0, 0, 0), null);
 	}
 	
 }

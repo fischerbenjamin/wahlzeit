@@ -42,11 +42,11 @@ public class AbstractCoordinateTest {
 	
 	@Before
 	public void setUp() {
-		cartesianA = new CartesianCoordinate(1.0, 1.0, 1.0);
-		cartesianB = new CartesianCoordinate(-1.0, 0, -1.0);
-		sphericA = new SphericCoordinate(90.0, 90.0, 2.0);		// new CartesianCoordinate(0, 2, 0);
-		sphericB = new SphericCoordinate(45.0, 45.0, 10.0);		// new CartesianCoordinate(5, 5, 7.0710678118655);
-		sphericC = new SphericCoordinate(45, 30, 2);
+		cartesianA = CartesianCoordinate.getCartesianCoordinate(1.0, 1.0, 1.0);
+		cartesianB = CartesianCoordinate.getCartesianCoordinate(-1.0, 0, -1.0);
+		sphericA = SphericCoordinate.getSphericCoordinate(90.0, 90.0, 2.0);		// CartesianCoordinate(0, 2, 0);
+		sphericB = SphericCoordinate.getSphericCoordinate(45.0, 45.0, 10.0);	// CartesianCoordinate(5, 5, 7.0710678118655);
+		sphericC = SphericCoordinate.getSphericCoordinate(45, 30, 2);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -130,8 +130,8 @@ public class AbstractCoordinateTest {
 		assertTrue(cartesianA.isEqual(cartesianA));
 		assertFalse(cartesianA.isEqual(cartesianB));
 		assertFalse(sphericB.isEqual(sphericA));
-		assertTrue(sphericA.isEqual(new CartesianCoordinate(0, 2, 0)));
-		assertTrue(sphericB.isEqual(new CartesianCoordinate(5, 5, 7.0710678118655)));
+		assertTrue(sphericA.isEqual(CartesianCoordinate.getCartesianCoordinate(0, 2, 0)));
+		assertTrue(sphericB.isEqual(CartesianCoordinate.getCartesianCoordinate(5, 5, 7.0710678118655)));
 	}
 	
 }

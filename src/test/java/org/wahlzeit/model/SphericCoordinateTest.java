@@ -24,22 +24,39 @@ import org.junit.Test;
 import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
 import org.junit.Before;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SphericCoordinateTest {
 
 	private SphericCoordinate sphericA;
 	private SphericCoordinate sphericB;
+	private SphericCoordinate sphericC;
 	private CartesianCoordinate cartesianA;
 	private CartesianCoordinate cartesianB;
 
 	@Before
 	public void setUp() {
-		sphericA = new SphericCoordinate(135.0, 135.0, 2.0);
-		sphericB = new SphericCoordinate(54.735610317245, 135.0, 1.7320508075689);
-		cartesianA = new CartesianCoordinate(-1.0, 1.0, -Math.sqrt(2));
-		cartesianB = new CartesianCoordinate(-1.0, 1.0, 1.0);
+		sphericA = SphericCoordinate.getSphericCoordinate(135.0, 135.0, 2.0);
+		sphericB = SphericCoordinate.getSphericCoordinate(54.735610317245, 135.0, 1.7320508075689);
+		sphericC = SphericCoordinate.getSphericCoordinate(135.0, 135.0, 2.0);
+		cartesianA = CartesianCoordinate.getCartesianCoordinate(-1.0, 1.0, -Math.sqrt(2));
+		cartesianB = CartesianCoordinate.getCartesianCoordinate(-1.0, 1.0, 1.0);
 	}
 
+	@Test
+	public void testValueCreate() {
+		assertEquals(sphericA, sphericC);
+		assertNotEquals(sphericA, sphericB);
+	}
+	
+	@Test
+	public void testValueClone() {
+		assertEquals(sphericA.clone(), sphericA);
+		assertEquals(sphericA.clone(), sphericC);
+		assertEquals(sphericC.clone(), sphericA);
+	}
+	
 	@Test
 	public void testAsSphericCoordinateA() throws InvalidCoordinateStateException {
 		SphericCoordinate converted = sphericA.asSphericCoordinate();
@@ -75,49 +92,49 @@ public class SphericCoordinateTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidPolar() {
 		@SuppressWarnings("unused")
-		SphericCoordinate tmp = new SphericCoordinate(Double.NaN, 0, 0);
+		SphericCoordinate tmp = SphericCoordinate.getSphericCoordinate(Double.NaN, 0, 0);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidPolar2() {
 		@SuppressWarnings("unused")
-		SphericCoordinate tmp = new SphericCoordinate(0-Coordinate.EPSILON, 0, 0);
+		SphericCoordinate tmp = SphericCoordinate.getSphericCoordinate(0-Coordinate.EPSILON, 0, 0);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidPolar3() {
 		@SuppressWarnings("unused")
-		SphericCoordinate tmp = new SphericCoordinate(180, 0, 0);
+		SphericCoordinate tmp = SphericCoordinate.getSphericCoordinate(180, 0, 0);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidAzimut() {
 		@SuppressWarnings("unused")
-		SphericCoordinate tmp = new SphericCoordinate(0, Double.NEGATIVE_INFINITY, 0);
+		SphericCoordinate tmp = SphericCoordinate.getSphericCoordinate(0, Double.NEGATIVE_INFINITY, 0);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidAzimut2() {
 		@SuppressWarnings("unused")
-		SphericCoordinate tmp = new SphericCoordinate(0, 0-Coordinate.EPSILON, 0);
+		SphericCoordinate tmp = SphericCoordinate.getSphericCoordinate(0, 0-Coordinate.EPSILON, 0);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidAzimut3() {
 		@SuppressWarnings("unused")
-		SphericCoordinate tmp = new SphericCoordinate(0, 360, 0);
+		SphericCoordinate tmp = SphericCoordinate.getSphericCoordinate(0, 360, 0);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidRadius() {
 		@SuppressWarnings("unused")
-		SphericCoordinate tmp = new SphericCoordinate(0, 0, Double.POSITIVE_INFINITY);
+		SphericCoordinate tmp = SphericCoordinate.getSphericCoordinate(0, 0, Double.POSITIVE_INFINITY);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidRadius2() {
 		@SuppressWarnings("unused")
-		SphericCoordinate tmp = new SphericCoordinate(0, 0, 0-Coordinate.EPSILON);
+		SphericCoordinate tmp = SphericCoordinate.getSphericCoordinate(0, 0, 0-Coordinate.EPSILON);
 	}
 	
 }
