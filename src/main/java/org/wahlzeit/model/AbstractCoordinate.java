@@ -22,12 +22,20 @@ package org.wahlzeit.model;
 
 import org.wahlzeit.model.exceptions.InvalidCoordinateCalculationException;
 import org.wahlzeit.model.exceptions.InvalidCoordinateStateException;
+import org.wahlzeit.utils.PatternInstance;
 
 /**
  * This is an abstract superclass for the concrete implementations of
  * three-dimensional coordinates. Currently, two representations are
  * supported by {@link SphericCoordinate} and {@link CartesianCoordinate}.
  */
+@PatternInstance(
+		patternName = "Template Method",
+		participants = {
+				"AbstractClass@class.AbstractCoordinate",
+				"ConcreteClass@class.CartesianCoordinate,class.SphericCoordinate"
+		}
+)
 public abstract class AbstractCoordinate implements Coordinate {
 	
 	
