@@ -20,6 +20,9 @@
 
 package org.wahlzeit.model;
 
+import org.wahlzeit.utils.asserts.AssertObject;
+import org.wahlzeit.utils.asserts.AssertString;
+
 /**
  * A TrainPhoto represents an uploaded photo of a train by the user.
  * It stores information about a train using a {@link Train} instance.
@@ -49,6 +52,7 @@ public class TrainPhoto extends Photo {
 	 */
 	public TrainPhoto(PhotoId myID) {
 		super(myID);
+		AssertObject.assertNotNull(myID, "myID");
 		this.train = new Train();
 	}
 
@@ -59,7 +63,19 @@ public class TrainPhoto extends Photo {
 	 */
 	public TrainPhoto(Train train) {
 		super();
-		assertTrainNotNull(train);
+		AssertObject.assertNotNull(train, "train");
+		this.train = train;
+	}
+
+	/**
+	 * Creates a new instance of type {@link TrainPhoto} with given values.
+	 *
+	 * @methodtype constructor
+	 */
+	public TrainPhoto(PhotoId id, Train train) {
+		super(id);
+		AssertObject.assertNotNull(train, "train");
+		AssertObject.assertNotNull(id, "photo id");
 		this.train = train;
 	}
 	
@@ -71,19 +87,6 @@ public class TrainPhoto extends Photo {
 	 */
 	public Train getTrain() {
 		return this.train;
-	}
-	
-	/**
-	 * Asserts that a given train object is not null.
-	 * 
-	 * @param train train of the photo
-	 * @throws IllegalArgumentException	if train is null
-	 * @methodtype assert
-	 */
-	private static void assertTrainNotNull(Train train) throws IllegalArgumentException {
-		if (train == null) {
-			throw new IllegalArgumentException("Train must not be null");
-		}
 	}
 
 }

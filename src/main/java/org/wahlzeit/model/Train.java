@@ -20,185 +20,99 @@
 
 package org.wahlzeit.model;
 
+import java.util.Objects;
+import org.wahlzeit.utils.asserts.*;
+
 /**
  *	Representation of a train. A train objects stores following information:
  *	{@link #type}		general type of the train
  *	{@link #engine}		engine the train uses
- *	{@link #speed}		speed of the train
- *	{@link #weight}		weight of the train
  *	{@link #buildYear}	build year of the train
- *	All fields are declared as final.
+ *	{@link #serialNumber}	serial number of the train
  */
 public class Train {
-	
-	/**
-	 * Default value.
-	 */
-	public static final int DEFAULT = 1;
-	
-	/**
-	 * General type of a train.
-	 */
-	enum Type {
-		SBAHN, REGIO, ICE, UNKNOWN
-	}
-	
-	/**
-	 * Engine a train uses.
-	 */
-	enum Engine {
-		ELECTRO, DIESEL, COAL, UNKNOWN
-	}
-	
-	private final Type type;			// type of the train
-	private final Engine engine;		// type of the engine the train uses
-	private final int speed;			// maximum speed the train can reach
-	private final int weight;			// weight of the train
+
+	private static final int DEFAULT = 1;	// Default value
+
+	protected TrainType type;				// type of the train
+	private String engine;				// type of the engine the train uses
 	private final int buildYear;		// the year the train was built
-	
-	/**
-	 * Default constructor.
-	 * 
-	 * @return new {@link Train}
-	 * @methodtype constructor
-	 */
-	public Train() {
-		this.type = Type.UNKNOWN;
-		this.engine = Engine.UNKNOWN;
-		this.speed = DEFAULT;
-		this.weight = DEFAULT;
-		this.buildYear = DEFAULT;
-	}
-	
+	private final String serialNumber;	// serial number of train
+
+
 	/**
 	 * Public constructor.
 	 * 
 	 * @param type	general type of the train
 	 * @param engine	engine the train uses
-	 * @param speed	speed of the train
-	 * @param weight	weight of the train
 	 * @param buildYear	year the train was built
-	 * @return new {@link Train}
 	 * @methodtype constructor
 	 */
-	public Train(Type type, Engine engine, int speed, int weight, int buildYear) {
+	public Train(TrainType type, String engine, int buildYear, String serialNumber) {
 		//@PRE
-		assertType(type);
-		assertEngine(engine);
-		assertSpeed(speed);
-		assertWeight(weight);
-		assertBuildYear(buildYear);
+		AssertString.assertStringNotNullorEmpty(engine, "engine");
+		AssertString.assertStringNotNullorEmpty(serialNumber, "serial number");
+		AssertInteger.assertIntegerIsPositive(buildYear, "buildYear");
 		//@PRE
-		this.type = type;
+		setType(type);
 		this.engine = engine;
-		this.speed = speed;
-		this.weight = weight;
 		this.buildYear = buildYear;
-	}
-	
-	/**
-	 * Assert method for {@link #type}.
-	 * 
-	 * @param type	general type of the train
-	 * @throws IllegalArgumentException	if type is null
-	 * @methodtype assert
-	 */
-	private void assertType(Type type) throws IllegalArgumentException {
-		if (type == null) {
-			throw new IllegalArgumentException("Type must not be null.");
-		}
-	}
-	
-	/**
-	 * Assert method for {@link #engine}.
-	 * 
-	 * @param engine	engine the train uses
-	 * @throws IllegalArgumentException	if engine is null
-	 * @methodtype assert
-	 */
-	private void assertEngine(Engine engine) throws IllegalArgumentException {
-		if (type == null) {
-			throw new IllegalArgumentException("Engine must not be null.");
-		}
+		this.serialNumber = serialNumber;
 	}
 
 	/**
-	 * Assert method for {@link #speed}.
-	 * 
-	 * @param speed	speed of the train
-	 * @throws IllegalArgumentException	if speed is negative or zero
-	 * @methodtype assert
+	 * Default constructor (required by {@link TrainPhoto}).
+	 *
+	 * @methodtype constructor
 	 */
-	private void assertSpeed(int speed) throws IllegalArgumentException {
-		if (speed <= 0) {
-			throw new IllegalArgumentException("Speed must not be positive.");
-		}
+	public Train() {
+		this.type = TrainType.DEFAULT;
+		this.engine = "DEFAULT";
+		this.buildYear = DEFAULT;
+		this.serialNumber = "DEFAULT";
 	}
-	
+
 	/**
-	 * Assert method for {@link #weight}.
-	 * 
-	 * @param weight	weight of the train
-	 * @throws IllegalArgumentException	if weight is negative or zero
-	 * @methodtype assert
+	 * Set method for {@link #type}.
+	 *
+	 * @param type
+	 * @methodtype set
 	 */
-	private void assertWeight(int weight) throws IllegalArgumentException {
-		if (weight <= 0.0) {
-			throw new IllegalArgumentException("Weight must be positive.");
-		}
+	public void setType(TrainType type) {
+		AssertObject.assertNotNull(type, "type");
+		this.type = type;
 	}
-	
+
+
 	/**
-	 * Assert method for {@link #buildYear}.
-	 * 
-	 * @param builYear	build year of the train
-	 * @throws IllegalArgumentException	if build year is negative
-	 * @methodtype assert
+	 * Set method for {@link #engine}.
+	 *
+	 * @param engine
+	 * @methodtype set
 	 */
-	private void assertBuildYear(int buildYear) throws IllegalArgumentException {
-		if (buildYear < 0) {
-			throw new IllegalArgumentException("Build year must be positive.");
-		}
+	public void setEngine(String engine) {
+		AssertString.assertStringNotNullorEmpty(engine, "engine");
+		this.engine = engine;
 	}
-	
+
 	/**
 	 * Getter for {@link #type}.
 	 * 
-	 * @return general type of the train
+	 * @return type of the train
 	 * @methodtype get
 	 */
-	public Type getType() {
+	public TrainType getType() {
 		return this.type;
 	}
-	
+
 	/**
 	 * Getter for {@link #engine}.
 	 * 
 	 * @return engine of the train
 	 * @methodtype get
 	 */
-	public Engine getEngine() {
+	public String getEngine() {
 		return this.engine;
-	}
-	
-	/**
-	 * Getter for {@link #speed}.
-	 * 
-	 * @return speed of the train
-	 * @methodtype get
-	 */
-	public int getSpeed() {
-		return this.speed;
-	}
-	
-	/**
-	 * Getter for {@link #weight}.
-	 * 
-	 * @return weight of the train
-	 * @methodtype get
-	 */
-	public int getWeight() {
-		return this.weight;
 	}
 	
 	/**
@@ -210,7 +124,25 @@ public class Train {
 	public int getBuildYear() {
 		return this.buildYear;
 	}
-	
-	
-	
+
+	/**
+	 * Getter for {@link #serialNumber}.
+	 *
+	 * @return serial number of the train
+	 * @methodtype get
+	 */
+	public String getSerialNumber() {
+		return this.serialNumber;
+	}
+
+	/**
+	 * Create hash code for instance.
+	 * @return hash code
+	 * @methodtype get
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(getType(), getEngine(), getBuildYear(), getSerialNumber());
+	}
+
 }
