@@ -36,9 +36,8 @@ public class Train {
 
 	protected TrainType type;				// type of the train
 	private String engine;				// type of the engine the train uses
-	private final int buildYear;		// the year the train was built
-	private final String serialNumber;	// serial number of train
-
+	private int buildYear;		// the year the train was built
+	private String serialNumber;	// serial number of train
 
 	/**
 	 * Public constructor.
@@ -49,27 +48,10 @@ public class Train {
 	 * @methodtype constructor
 	 */
 	public Train(TrainType type, String engine, int buildYear, String serialNumber) {
-		//@PRE
-		AssertString.assertStringNotNullorEmpty(engine, "engine");
-		AssertString.assertStringNotNullorEmpty(serialNumber, "serial number");
-		AssertInteger.assertIntegerIsPositive(buildYear, "buildYear");
-		//@PRE
 		setType(type);
-		this.engine = engine;
-		this.buildYear = buildYear;
-		this.serialNumber = serialNumber;
-	}
-
-	/**
-	 * Default constructor (required by {@link TrainPhoto}).
-	 *
-	 * @methodtype constructor
-	 */
-	public Train() {
-		this.type = TrainType.DEFAULT;
-		this.engine = "DEFAULT";
-		this.buildYear = DEFAULT;
-		this.serialNumber = "DEFAULT";
+		setEngine(engine);
+		setBuildYear(buildYear);
+		setSerialNumber(serialNumber);
 	}
 
 	/**
@@ -83,7 +65,6 @@ public class Train {
 		this.type = type;
 	}
 
-
 	/**
 	 * Set method for {@link #engine}.
 	 *
@@ -93,6 +74,28 @@ public class Train {
 	public void setEngine(String engine) {
 		AssertString.assertStringNotNullorEmpty(engine, "engine");
 		this.engine = engine;
+	}
+
+	/**
+	 * Set method for {@link #buildYear}.
+	 *
+	 * @param buildYear
+	 * @methodtype set
+	 */
+	public void setBuildYear(int buildYear) {
+		AssertInteger.assertIntegerIsPositive(buildYear, "buildYear");
+		this.buildYear = buildYear;
+	}
+
+	/**
+	 * Set method for {@link #serialNumber}.
+	 *
+	 * @param serialNumber
+	 * @methodtype set
+	 */
+	public void setSerialNumber(String serialNumber) {
+		AssertString.assertStringNotNullorEmpty(serialNumber, "serialNumber");
+		this.serialNumber = serialNumber;
 	}
 
 	/**

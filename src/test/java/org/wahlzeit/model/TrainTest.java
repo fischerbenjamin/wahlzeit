@@ -37,8 +37,8 @@ public class TrainTest {
     
     @Before
     public void setUp() {
-        train = new Train();
-        train2 = new Train();
+        train = TrainManager.getInstance().createTrain();
+        train2 = TrainManager.getInstance().createTrain();
         train3 = new Train(TrainType.DEFAULT, "Diesel", 1997, "5627HAVJD62");
     }
 

@@ -21,10 +21,12 @@
 package org.wahlzeit.model;
 
 import java.util.HashMap;
+
+import org.wahlzeit.utils.Defaults;
 import org.wahlzeit.utils.PatternInstance;
 
 /**
- *  Manager class for {@link Train} and {@link TrainType}.
+ * Manager class for {@link Train} and {@link TrainType}.
  */
 @PatternInstance(
         patternName = "Singleton",
@@ -44,7 +46,7 @@ public class TrainManager {
     /**
      * Return the singleton instance.
      *
-     * @return  singleton
+     * @return singleton
      * @methodtype get
      */
     public static TrainManager getInstance() {
@@ -56,9 +58,9 @@ public class TrainManager {
      * Therefore, it checks if this type has already been created and returns this
      * instance (if so). Otherwise, a new object is created and stored in a map.
      *
-     * @param brand company that created the train
-     * @param model train type model
-     * @param speed maximum speed this type of train is able to drive
+     * @param brand            company that created the train
+     * @param model            train type model
+     * @param speed            maximum speed this type of train is able to drive
      * @param isPassengerTrain indicates if this type of train is able to transport passengers
      * @return instance
      * @methodtype get
@@ -96,24 +98,34 @@ public class TrainManager {
     /**
      * Creates a new {@link Train} object and updates the internal structure.
      *
-     * @param brand company that created this type of train
-     * @param model train type model
-     * @param speed maximum speed this type of train is able to drive
-     * @param isPassengerTrain  indicates if this type of train is able to transport passengers
-     * @param engine    type of engine
-     * @param buildYear year of manufacturing
-     * @param serialNumber serial number of train
-     * @return  new instance of {@link Train}
+     * @param brand            company that created this type of train
+     * @param model            train type model
+     * @param speed            maximum speed this type of train is able to drive
+     * @param isPassengerTrain indicates if this type of train is able to transport passengers
+     * @param engine           type of engine
+     * @param buildYear        year of manufacturing
+     * @param serialNumber     serial number of train
+     * @return new instance of {@link Train}
      * @methodtype factory
      */
     public Train createTrain(String brand, String model, int speed, boolean isPassengerTrain, String engine,
-                                int buildYear, String serialNumber)
-    {
+                             int buildYear, String serialNumber) {
         TrainType trainType = getTrainType(brand, model, speed, isPassengerTrain);
         Train train = trainType.createInstance(engine, buildYear, serialNumber);
         allTrains.put(train.hashCode(), train);
         allTypes.put(trainType.hashCode(), trainType);
         return train;
+    }
+
+    /**
+     * Creates a new {@link Train} object and updates the internal structure.
+     *
+     * @return new instance of {@link Train}
+     * @methodtype factory
+     */
+    public Train createTrain() {
+        return createTrain(Defaults.STRING, Defaults.STRING, Defaults.POSITIVE_INTEGER, false,
+                Defaults.STRING, Defaults.POSITIVE_INTEGER, Defaults.STRING);
     }
 
 }

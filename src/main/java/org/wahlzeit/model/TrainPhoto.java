@@ -42,7 +42,7 @@ public class TrainPhoto extends Photo {
 	 * @methodtype constructor
 	 */
 	public TrainPhoto() {
-		this.train = new Train();
+		this.train = TrainManager.getInstance().createTrain();
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class TrainPhoto extends Photo {
 	public TrainPhoto(PhotoId myID) {
 		super(myID);
 		AssertObject.assertNotNull(myID, "myID");
-		this.train = new Train();
+		this.train = TrainManager.getInstance().createTrain();
 	}
 
 	/**

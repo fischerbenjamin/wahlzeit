@@ -39,7 +39,7 @@ public class TrainManagerTest {
 
     @Before
     public void setUp() {
-        t1 = new Train();
+        t1 = TrainManager.getInstance().createTrain();
         t2 = new Train(TrainType.DEFAULT, "Diesel", 1997, "5627HAVJD62");
         tt1 = new TrainType(Defaults.STRING, Defaults.STRING, Defaults.POSITIVE_INTEGER, true);
         tt2 = new TrainType(Defaults.STRING, Defaults.STRING, 2, true);
